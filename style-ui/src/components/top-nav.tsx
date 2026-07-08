@@ -12,6 +12,7 @@ import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import QrCode2Icon from "@mui/icons-material/QrCode2";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
+import { ModeToggle } from "./mode-toggle";
 
 export interface NavItem {
   key: string;
@@ -93,6 +94,7 @@ export function TopNav({
         <div className="flex-1 md:hidden" />
 
         <div className="flex shrink-0 items-center gap-2 md:gap-3">
+          <ModeToggle />
           <IconButton
             aria-label="My badge QR"
             onClick={onQrClick}
@@ -100,6 +102,7 @@ export function TopNav({
           >
             <QrCode2Icon />
           </IconButton>
+
           <IconButton aria-label="Profile menu" onClick={(e) => setAnchor(e.currentTarget)}>
             <Avatar sx={{ width: 34, height: 34, fontSize: 14 }}>{initials}</Avatar>
           </IconButton>
