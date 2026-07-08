@@ -1,0 +1,111 @@
+@layer theme, base, mui, components, utilities;
+@import "tailwindcss";
+
+/* Enable dark: utilities keyed to the .dark class (set by MUI's color scheme) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ── Etnyre Summit design tokens ──────────────────────────────
+   Source of truth for color. Tailwind reads these via @theme;
+   the MUI theme (src/theme/theme.ts) references the same vars,
+   so flipping them under .dark switches BOTH systems at once. */
+:root {
+  /* Brand yellow — identical in both modes; content on yellow
+     always uses --summit-on-yellow (never flips) */
+  --summit-yellow: #ffed00;
+  --summit-yellow-hover: #f0e000;
+  --summit-yellow-pressed: #ddce00;
+  --summit-yellow-tint: #fffbd1;
+  --summit-on-yellow: #1c1c1e;
+
+  /* Ink & grey ramp (deck charcoal + #ABAAAC theme grey).
+     "ink" = foreground; the ramp runs surface → text. */
+  --summit-ink: #1c1c1e;
+  --summit-grey-800: #2a2a2e;
+  --summit-grey-700: #4a4a4c;
+  --summit-grey-600: #6b6a6c;
+  --summit-grey-500: #8a898b;
+  --summit-grey-400: #abaaac;
+  --summit-grey-300: #c8c7c9;
+  --summit-grey-200: #dededd;
+  --summit-grey-100: #eeedeb;
+  --summit-grey-50: #f7f6f3;
+
+  /* Amber (candy corn) — attention / errors. #F98719 from deck */
+  --summit-amber-100: #fce9d2;
+  --summit-amber-300: #fbb96a;
+  --summit-amber-500: #f98719;
+  --summit-amber-700: #c56508;
+  --summit-amber-900: #9a5108;
+
+  --background: #ffffff;      /* page */
+  --summit-surface: #ffffff;  /* cards, bars, sheets */
+  --foreground: var(--summit-ink);
+}
+
+/* Dark scheme: tokens flip, component classes follow automatically.
+   Ink becomes light, the grey ramp inverts (50 = darkest surface),
+   amber text/backgrounds swap ends for contrast. Yellow is unchanged. */
+.dark {
+  color-scheme: dark;
+
+  --summit-yellow-tint: #35310e;
+
+  --summit-ink: #f2f2f0;
+  --summit-grey-800: #e4e3e6;
+  --summit-grey-700: #c5c4c8;
+  --summit-grey-600: #a9a8ac;
+  --summit-grey-500: #8a898b;
+  --summit-grey-400: #6e6d72;
+  --summit-grey-300: #45454b;
+  --summit-grey-200: #333338;
+  --summit-grey-100: #26262a;
+  --summit-grey-50: #1f1f22;
+
+  --summit-amber-100: #3b2a14;
+  --summit-amber-700: #fba94c;
+  --summit-amber-900: #fdc788;
+
+  --background: #151517;
+  --summit-surface: #1f1f22;
+  --foreground: var(--summit-ink);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--summit-surface);
+
+  --color-yellow: var(--summit-yellow);
+  --color-yellow-hover: var(--summit-yellow-hover);
+  --color-yellow-pressed: var(--summit-yellow-pressed);
+  --color-yellow-tint: var(--summit-yellow-tint);
+  --color-on-yellow: var(--summit-on-yellow);
+
+  --color-ink: var(--summit-ink);
+  --color-grey-800: var(--summit-grey-800);
+  --color-grey-700: var(--summit-grey-700);
+  --color-grey-600: var(--summit-grey-600);
+  --color-grey-500: var(--summit-grey-500);
+  --color-grey-400: var(--summit-grey-400);
+  --color-grey-300: var(--summit-grey-300);
+  --color-grey-200: var(--summit-grey-200);
+  --color-grey-100: var(--summit-grey-100);
+  --color-grey-50: var(--summit-grey-50);
+
+  --color-amber-100: var(--summit-amber-100);
+  --color-amber-300: var(--summit-amber-300);
+  --color-amber-500: var(--summit-amber-500);
+  --color-amber-700: var(--summit-amber-700);
+  --color-amber-900: var(--summit-amber-900);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --radius-card: 14px;
+  --radius-control: 10px;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}

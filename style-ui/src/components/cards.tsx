@@ -1,0 +1,89 @@
+"use client";
+import * as React from "react";
+import Card from "@mui/material/Card";
+import CardActionArea from "@mui/material/CardActionArea";
+import Chip from "@mui/material/Chip";
+import Avatar from "@mui/material/Avatar";
+import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
+import ScheduleRoundedIcon from "@mui/icons-material/ScheduleRounded";
+
+/** Agenda session. `live` renders the yellow "Live now" chip. */
+export function SessionCard({
+  title,
+  time,
+  location,
+  live,
+  onClick,
+}: {
+  title: string;
+  time: string;
+  location: string;
+  live?: boolean;
+  onClick?: () => void;
+}) {
+  return (
+    <Card>
+      <CardActionArea onClick={onClick} className="p-4">
+        <div className="flex items-start justify-between gap-3">
+          <p className="text-[15px] font-semibold leading-snug text-ink">{title}</p>
+          {live && <Chip size="small" color="primary" label="Live now" />}
+        </div>
+        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[13px] text-grey-600">
+          <span className="inline-flex items-center gap-1">
+            <ScheduleRoundedIcon sx={{ fontSize: 16 }} /> {time}
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <PlaceRoundedIcon sx={{ fontSize: 16 }} /> {location}
+          </span>
+        </div>
+      </CardActionArea>
+    </Card>
+  );
+}
+
+/** Speaker with expandable bio (per the "expand speaker to view details" story). */
+export function SpeakerCard({
+  name,
+  role,
+  initials,
+  bio,
+  photoUrl,
+}: {
+  name: string;
+  role: string;
+  initials: string;
+  bio?: string;
+  photoUrl?: string;
+}) {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <Card>
+      <CardActionArea
+        onClick={() => bio && setOpen((o) => !o)}
+        className="p-4"
+        aria-expanded={open}
+      >
+        <div className="flex items-center gap-3">
+          <Avatar src={photoUrl} sx={{ width: 46, height: 46 }}>
+            {initials}
+          </Avatar>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[15px] font-semibold text-ink">{name}</p>
+            <p className="truncate text-[13px] text-grey-600">{role}</p>
+          </div>
+        </div>
+        {bio && open && <p className="mt-3 text-[13px] leading-relaxed text-grey-700">{bio}</p>}
+      </CardActionArea>
+    </Card>
+  );
+}
+
+/** Big-number stat tile (analytics dashboard, about section). */
+export function StatCard({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="rounded-(--radius-card) bg-grey-50 px-3 py-4 text-center">
+      <p className="text-2xl font-bold text-ink">{value}</p>
+      <p className="mt-0.5 text-xs text-grey-600">{label}</p>
+    </div>
+  );
+}
