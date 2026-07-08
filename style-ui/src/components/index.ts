@@ -1,5 +1,5 @@
 export { PageContainer, SectionHeader, ListRow } from "./layout";
-export { TopAppBar, BottomNav, type SummitTab } from "./navigation";
+export { TopAppBar, type SummitTab } from "./navigation";
 export { SessionCard, SpeakerCard, StatCard } from "./cards";
 export { QuestionFab } from "./question-fab";
 export { AiTag } from "./ai-tag";
@@ -9,3 +9,4 @@ export { QrBadge, ContactShareList, type ShareField } from "./qr";
 export { Banner, EmptyState, LabeledProgress, useToast } from "./feedback";
 export { FeedbackStepper } from "./feedback-stepper";
 export { ModeToggle } from "./mode-toggle";
+export { TopNav, useScrollSpy} from "./top-nav";

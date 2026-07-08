@@ -1,0 +1,188 @@
+"use client";
+import * as React from "react";
+import Link from "next/link";
+import IconButton from "@mui/material/IconButton";
+import Avatar from "@mui/material/Avatar";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Divider from "@mui/material/Divider";
+import Drawer from "@mui/material/Drawer";
+import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import QrCode2Icon from "@mui/icons-material/QrCode2";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
+
+export interface NavItem {
+  key: string;
+  label: string;
+  href: string; // routes ("/agenda") or scroll anchors ("/#about")
+  icon?: React.ReactNode; // shown in the mobile drawer
+}
+
+/**
+ * Fixed app-wide nav — the three sections defined for this project.
+ * Edit here if the information architecture changes; not passed as a prop
+ * so every page is guaranteed to render the same nav.
+ */
+const NAV_ITEMS: NavItem[] = [
+  { key: "about", label: "About us", href: "/#about" },
+  { key: "agenda", label: "Agenda & speakers", href: "/agenda" },
+  { key: "polls", label: "Polls & feedback", href: "/polls" },
+];
+
+/**
+ * Responsive top navigation.
+ * Desktop (md+): logo · centered links (yellow underline = active) · QR + profile.
+ * Mobile: hamburger (far left) · logo · QR + profile; links live in a drawer.
+ * The QR button is the ONE yellow element in the bar — keep it that way.
+ * For scroll-anchor items ("/#about"), pair with useScrollSpy for activeKey.
+ */
+export function TopNav({
+  activeKey,
+  logo,
+  initials,
+  onQrClick,
+  onProfile,
+  onLogout,
+}: {
+  activeKey?: string;
+  logo: React.ReactNode;
+  initials: string;
+  onQrClick?: () => void;
+  onProfile?: () => void;
+  onLogout?: () => void;
+}) {
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [anchor, setAnchor] = React.useState<null | HTMLElement>(null);
+
+  return (
+    <header className="sticky top-0 z-40 border-b border-grey-200 bg-surface">
+      <div className="mx-auto flex h-14 max-w-5xl items-center gap-2 px-2 md:h-[60px] md:px-5">
+        <IconButton
+          aria-label="Open menu"
+          className="md:hidden"
+          onClick={() => setDrawerOpen(true)}
+        >
+          <MenuRoundedIcon />
+        </IconButton>
+
+        <Link href="/" aria-label="Home" className="flex shrink-0 items-center gap-2">
+          {logo}
+        </Link>
+
+        <nav className="hidden flex-1 items-center justify-center gap-8 self-stretch md:flex">
+          {NAV_ITEMS.map((item) => {
+            const active = item.key === activeKey;
+            return (
+              <Link
+                key={item.key}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={`flex items-center self-stretch border-b-[3px] px-0.5 text-[14px] transition-colors ${
+                  active
+                    ? "border-yellow font-semibold text-ink"
+                    : "border-transparent text-grey-600 hover:text-ink"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+        <div className="flex-1 md:hidden" />
+
+        <div className="flex shrink-0 items-center gap-2 md:gap-3">
+          <IconButton
+            aria-label="My badge QR"
+            onClick={onQrClick}
+            className="rounded-(--radius-control) bg-yellow text-on-yellow hover:bg-yellow-hover"
+          >
+            <QrCode2Icon />
+          </IconButton>
+          <IconButton aria-label="Profile menu" onClick={(e) => setAnchor(e.currentTarget)}>
+            <Avatar sx={{ width: 34, height: 34, fontSize: 14 }}>{initials}</Avatar>
+          </IconButton>
+        </div>
+
+        <Menu anchorEl={anchor} open={Boolean(anchor)} onClose={() => setAnchor(null)}>
+          <MenuItem
+            onClick={() => {
+              setAnchor(null);
+              onProfile?.();
+            }}
+          >
+            <ListItemIcon>
+              <PersonRoundedIcon fontSize="small" />
+            </ListItemIcon>
+            My profile
+          </MenuItem>
+          <Divider />
+          <MenuItem
+            onClick={() => {
+              setAnchor(null);
+              onLogout?.();
+            }}
+          >
+            <ListItemIcon>
+              <LogoutRoundedIcon fontSize="small" />
+            </ListItemIcon>
+            Sign out
+          </MenuItem>
+        </Menu>
+      </div>
+
+      <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+        <nav className="w-72 p-2 pt-4" aria-label="Main menu">
+          <div className="mb-3 px-3">{logo}</div>
+          {NAV_ITEMS.map((item) => {
+            const active = item.key === activeKey;
+            return (
+              <Link
+                key={item.key}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                onClick={() => setDrawerOpen(false)}
+                className={`flex items-center gap-3 px-3 py-3 text-[14px] ${
+                  active
+                    ? "border-l-[3px] border-yellow bg-yellow-tint font-semibold text-ink"
+                    : "border-l-[3px] border-transparent text-grey-700 hover:bg-grey-50"
+                }`}
+              >
+                {item.icon && <span className="text-grey-600">{item.icon}</span>}
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+      </Drawer>
+    </header>
+  );
+}
+
+/**
+ * Scroll-spy for anchor sections. Pass section element ids; returns the id
+ * currently in view (or null). Feed it into TopNav's activeKey:
+ *
+ *   const inView = useScrollSpy(["about"]);
+ *   <TopNav activeKey={inView ?? routeKey} ... />
+ */
+export function useScrollSpy(sectionIds: string[], rootMargin = "-20% 0px -70% 0px") {
+  const [activeId, setActiveId] = React.useState<string | null>(null);
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setActiveId(entry.target.id);
+        }
+      },
+      { rootMargin }
+    );
+    const els = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+    els.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [sectionIds, rootMargin]);
+  return activeId;
+}

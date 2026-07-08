@@ -15,13 +15,13 @@ import Skeleton from "@mui/material/Skeleton";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import QrCode2Icon from "@mui/icons-material/QrCode2";
 import ForumRoundedIcon from "@mui/icons-material/ForumRounded";
+import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
 import {
   PageContainer,
   SectionHeader,
   ListRow,
-  TopAppBar,
-  BottomNav,
-  type SummitTab,
+  TopNav,
+  useScrollSpy,
   SessionCard,
   SpeakerCard,
   StatCard,
@@ -56,7 +56,7 @@ const swatches: Array<{ name: string; hex: string; note?: string }> = [
 
 export default function StyleGuide() {
   const [tab, setTab] = React.useState(0);
-  const [navTab, setNavTab] = React.useState<SummitTab>("home");
+  const inView = useScrollSpy(["about"]);
   const [votedId, setVotedId] = React.useState<string | null>(null);
   const [upvoted, setUpvoted] = React.useState(false);
   const [rating, setRating] = React.useState<string | null>(null);
@@ -69,15 +69,20 @@ export default function StyleGuide() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <TopAppBar
-        name="Sarah"
-        company="Hendrick Screen · Supplier partner"
+      <TopNav
+        activeKey={inView ?? undefined}
+        logo={
+          <span className="flex items-center gap-2">
+            <span className="text-lg font-bold leading-none text-ink">Etnyre</span>
+          </span>
+        }
         initials="SC"
         onQrClick={() => showToast("Badge QR opened")}
+        onProfile={() => showToast("Profile", "info")}
         onLogout={() => showToast("Signed out", "info")}
       />
       <PageContainer>
-        <div className="mt-2 flex items-center justify-between">
+        <div id="top" className="mt-2 flex items-center justify-between scroll-mt-16">
           <h1 className="text-2xl font-bold text-ink">Summit UI style guide</h1>
           <ModeToggle />
         </div>
@@ -278,7 +283,6 @@ export default function StyleGuide() {
         sessionLabel="Supply chain roadmap keynote"
         onSubmit={() => showToast("Question submitted")}
       />
-      <BottomNav value={navTab} onChange={setNavTab} />
       {toast}
     </div>
   );
