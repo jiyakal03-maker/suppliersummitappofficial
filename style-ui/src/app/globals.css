@@ -112,4 +112,47 @@ body {
 
 html {
   scroll-behavior: smooth;
+  font-size: 20px;
+}
+
+/* WelcomeReveal keyframes. Component applies these only when
+   prefers-reduced-motion is NOT set — see welcome-reveal.tsx. */
+@keyframes summit-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes summit-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes summit-draw {
+  from {
+    width: 0;
+  }
+  to {
+    width: 10rem;
+  }
+}
+.animate-summit-fade {
+  opacity: 0;
+  animation: summit-fade 0.6s ease forwards;
+}
+.animate-summit-rise {
+  opacity: 0;
+  animation: summit-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.animate-summit-draw {
+  width: 0;
+  animation: summit-draw 0.7s ease forwards;
+  animation-delay: 1.2s;
 }

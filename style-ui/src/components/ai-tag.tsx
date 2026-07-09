@@ -16,8 +16,8 @@ export function AiTag({
   detail?: string;
 }) {
   const chip = (
-    <span className="inline-flex items-center gap-1 rounded-full bg-grey-100 px-2 py-0.5 text-[11px] font-semibold text-grey-700">
-      <AutoAwesomeRoundedIcon sx={{ fontSize: 13 }} />
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-grey-100 px-2.5 py-1 text-[13px] font-semibold text-grey-700">
+      <AutoAwesomeRoundedIcon sx={{ fontSize: 16 }} />
       {label}
     </span>
   );
