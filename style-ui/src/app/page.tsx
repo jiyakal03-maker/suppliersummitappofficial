@@ -2,6 +2,7 @@
 import * as React from "react";
 import ScheduleRoundedIcon from "@mui/icons-material/ScheduleRounded";
 import { PageContainer, SectionHeader, ListRow, TopNav, Banner, useToast } from "@/components";
+import { EtnBanner } from "@/components/homepage/etn-banner"
 
 /**
  * Route: / (landing page)
@@ -29,7 +30,7 @@ export default function Home() {
         onLogout={() => showToast("Signed out", "info")}
       />
       <PageContainer>
-        <p className="mt-4 text-[15px] text-grey-600">Welcome back, Sarah</p>
+        <p className="text-sm text-grey-600">Welcome back, Sarah</p>
 
         <SectionHeader eyebrow="Happening now" title="Live session" />
         <Banner>
@@ -43,6 +44,8 @@ export default function Home() {
           subtitle="Full session list, times, and speaker bios"
           onClick={() => showToast("Opening agenda", "info")}
         />
+        <SectionHeader eyebrow="About Us" title="Our Brand" />
+        <EtnBanner/>
       </PageContainer>
       {toast}
     </div>

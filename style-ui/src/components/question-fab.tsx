@@ -73,14 +73,19 @@ export function QuestionFab({
                 placeholder="Type your question for the speaker"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
+                sx = {{"& .MuiInputBase-input": {fontSize: 15}}}
               />
               <div className="mt-3 flex items-center justify-between gap-2">
-                <AiTag label="Grouped with similar questions by AI" />
+                <AiTag 
+                  label="Grouped by AI" 
+                  detail = "Similar questions from other attendees are grouped together so speakers can answer the most popular ones first"
+                />
                 <Button
                   variant="contained"
                   color="primary"
                   onClick={submit}
                   disabled={!text.trim() || sending}
+                  sx = {{fontSize: 14}}
                 >
                   {sending ? "Sending" : "Submit"}
                 </Button>
@@ -90,8 +95,12 @@ export function QuestionFab({
         </ClickAwayListener>
       ) : (
         <Zoom in>
-          <Fab aria-label="Ask a question" onClick={() => setOpen(true)}>
-            <QuestionAnswerRoundedIcon />
+          <Fab
+            aria-label="Ask a question"
+            onClick={() => setOpen(true)}
+            sx={{ width: 64, height: 64 }}
+          >
+            <QuestionAnswerRoundedIcon sx={{ fontSize: 28 }} />
           </Fab>
         </Zoom>
       )}

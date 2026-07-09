@@ -10,7 +10,7 @@ export function Banner({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-2.5 rounded-(--radius-control) bg-yellow-tint px-3.5 py-2.5">
       <CampaignRoundedIcon className="shrink-0 text-ink" sx={{ fontSize: 20 }} />
-      <p className="text-[13px] font-medium text-ink">{children}</p>
+      <p className="text-[16px] font-medium text-grey-700">{children}</p>
     </div>
   );
 }
@@ -30,8 +30,8 @@ export function EmptyState({
   return (
     <div className="flex flex-col items-center gap-2 rounded-(--radius-card) bg-grey-50 px-6 py-10 text-center">
       {icon && <span className="text-grey-400">{icon}</span>}
-      <p className="text-[15px] font-semibold text-ink">{title}</p>
-      {body && <p className="max-w-xs text-[13px] text-grey-600">{body}</p>}
+      <p className="text-sm font-semibold text-ink">{title}</p>
+      {body && <p className="max-w-xs text-sm text-grey-600">{body}</p>}
       {action && <div className="mt-2">{action}</div>}
     </div>
   );
@@ -50,8 +50,8 @@ export function LabeledProgress({
   return (
     <div>
       <div className="mb-1 flex items-baseline justify-between">
-        <span className="text-[13px] font-medium text-grey-700">{label}</span>
-        <span className="text-[13px] font-semibold text-ink">{valueLabel ?? `${Math.round(value)}%`}</span>
+        <span className="text-sm font-medium text-grey-700">{label}</span>
+        <span className="text-sm font-semibold text-ink">{valueLabel ?? `${Math.round(value)}%`}</span>
       </div>
       <LinearProgress variant="determinate" value={value} aria-label={label} />
     </div>

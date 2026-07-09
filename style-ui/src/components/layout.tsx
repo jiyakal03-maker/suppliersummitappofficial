@@ -8,7 +8,16 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
  * else composes with Tailwind utilities.
  */
 
-/** Mobile-first page shell: max width, responsive padding, safe-area insets. */
+/**
+ * The single horizontal width/padding rhythm for the whole app. Any element
+ * that needs to align to the page's content column — the page shell, the
+ * nav bar's inner row, full-bleed section content — uses this constant
+ * instead of declaring its own max-width/padding. If the app's width or
+ * padding ever needs to change, it changes here once.
+ */
+export const CONTAINER = "mx-auto w-[92%] max-w-[1400px] px-5 lg:px-10";
+
+/** Mobile-first page shell: shared container width, vertical padding, safe-area insets. */
 export function PageContainer({
   children,
   className = "",
@@ -18,7 +27,7 @@ export function PageContainer({
 }) {
   return (
     <main
-      className={`mx-auto w-full max-w-xl px-4 pb-24 pt-4 sm:px-6 ${className}`}
+      className={`${CONTAINER} py-5 lg:py-10 ${className}`}
       style={{
         paddingBottom: "calc(6rem + env(safe-area-inset-bottom))",
       }}
