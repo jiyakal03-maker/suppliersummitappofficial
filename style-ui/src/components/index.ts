@@ -12,3 +12,6 @@ export { ModeToggle } from "./mode-toggle";
 export { TopNav, useScrollSpy} from "./top-nav";
 export { GlobalQuestionFab } from "./global-question-fab";
 export { EtnBanner } from "./homepage/etn-banner";
+export { MissionVision } from "./homepage/mission-vision";
+export { OurValues } from "./homepage/values";
+export { JourneyRoadmap } from "./homepage/journey-roadmap"
