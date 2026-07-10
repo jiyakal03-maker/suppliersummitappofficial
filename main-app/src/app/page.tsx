@@ -3,6 +3,9 @@ import * as React from "react";
 import ScheduleRoundedIcon from "@mui/icons-material/ScheduleRounded";
 import { PageContainer, SectionHeader, ListRow, TopNav, Banner, useToast } from "@/components";
 import { EtnBanner } from "@/components/homepage/etn-banner"
+import { MissionVision } from "@/components/homepage/mission-vision";
+import { OurValues } from "@/components/homepage/values"
+import { JourneyRoadmap } from "@/components/homepage/journey-roadmap";
 
 /**
  * Route: / (landing page)
@@ -45,7 +48,10 @@ export default function Home() {
           onClick={() => showToast("Opening agenda", "info")}
         />
         <SectionHeader eyebrow="About Us" title="Our Brand" />
-        <EtnBanner/>
+        <MissionVision />
+        <OurValues />
+        <SectionHeader eyebrow="Our History" title="Roadmap of the Etnyre Journey" />
+        <JourneyRoadmap />
       </PageContainer>
       {toast}
     </div>
