@@ -15,3 +15,6 @@ export { EtnBanner } from "./homepage/etn-banner";
 export { MissionVision } from "./homepage/mission-vision";
 export { OurValues } from "./homepage/values";
 export { JourneyRoadmap } from "./homepage/journey-roadmap"
+export { RoadAheadDial } from "./homepage/road-ahead-dial"
+export { BusinessUnits } from "./homepage/business-units"
+export { GrowthMachine } from "./text"
