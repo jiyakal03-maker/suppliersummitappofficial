@@ -6,6 +6,9 @@ import { EtnBanner } from "@/components/homepage/etn-banner"
 import { MissionVision } from "@/components/homepage/mission-vision";
 import { OurValues } from "@/components/homepage/values"
 import { JourneyRoadmap } from "@/components/homepage/journey-roadmap";
+import { RoadAheadDial } from "@/components/homepage/road-ahead-dial";
+import { BusinessUnits } from "@/components/homepage/business-units";
+import { GrowthMachine } from "@/components";
 
 /**
  * Route: / (landing page)
@@ -52,6 +55,8 @@ export default function Home() {
         <OurValues />
         <SectionHeader eyebrow="Our History" title="Roadmap of the Etnyre Journey" />
         <JourneyRoadmap />
+        <RoadAheadDial />
+        <BusinessUnits />
       </PageContainer>
       {toast}
     </div>
