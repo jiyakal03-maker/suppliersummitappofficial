@@ -6,12 +6,9 @@ erDiagram
         varchar Phone
         varchar Email
         varchar Company
-        boolean isSpeaker
-        boolean isAdmin
-        varchar role "derived/enum: speaker | analytics | admin"
+        varchar role "enum: attendee | speaker | analytics | admin"
         numeric PIN "hashed"
     }
-
     SPEAKERS {
         uuid UID PK
         uuid User_UID FK "links to USER_INFO instead of duplicating name/email"
@@ -19,7 +16,6 @@ erDiagram
         varchar Event_Name
         text Bio
     }
-
     AGENDA {
         uuid UID PK
         varchar Event_Name
@@ -29,13 +25,11 @@ erDiagram
         uuid Speaker_UID FK "was a name string, now FK to SPEAKERS"
         text Topics
     }
-
     TRANSCRIPT {
         uuid UID PK
         uuid Agenda_UID FK
         text Transcript_Text
     }
-
     POLLS {
         uuid UID PK
         varchar Poll_Name
@@ -43,7 +37,6 @@ erDiagram
         varchar Status "locked | live | unlocked"
         boolean is_anonymous "NEW: set per poll"
     }
-
     POLL_QUESTIONS {
         uuid UID PK
         uuid Poll_UID FK
@@ -51,28 +44,24 @@ erDiagram
         varchar Question_Type "multiple_choice | text | rating"
         text Options "nullable, for multiple_choice"
     }
-
     POLL_RESPONSES {
         uuid UID PK
         uuid Poll_UID FK
         uuid Respondent_UID FK "NULLABLE - only set if is_anonymous = false"
         timestamp Submitted_At
     }
-
     POLL_ANSWERS {
         uuid UID PK
         uuid Poll_Question_UID FK
         uuid Poll_Response_UID FK
         text Answer_Value
     }
-
     POLL_SUBMISSION_STATUS {
         uuid UID PK
         uuid Poll_UID FK
         uuid User_UID FK "tracked even if poll is anonymous - completion only, no content"
         boolean submitted
     }
-
     QUESTIONS {
         uuid UID PK
         varchar Topic "nullable"
@@ -82,19 +71,33 @@ erDiagram
         uuid Submitter_UID FK
         uuid Speaker_UID FK "NEW: ML-determined relevant speaker"
     }
-
+    GROWTH_MACHINE_BOARD {
+        uuid UID PK
+        uuid Submitter_UID FK
+        varchar Title
+        text Description
+        varchar Status "submitted | under_review | approved | rejected"
+        timestamp Submitted_At
+    }
+    GROWTH_MACHINE_VOTES {
+        uuid UID PK
+        uuid Board_UID FK
+        uuid Voter_UID FK
+        varchar Vote_Value "e.g. upvote | downvote, or weighted score"
+        timestamp Voted_At
+    }
     USER_INFO ||--o{ SPEAKERS : "is a"
     USER_INFO ||--o{ POLL_RESPONSES : "submits (if not anonymous)"
     USER_INFO ||--o{ POLL_SUBMISSION_STATUS : "tracked for"
     USER_INFO ||--o{ QUESTIONS : "submits"
-
+    USER_INFO ||--o{ GROWTH_MACHINE_BOARD : "submits"
+    USER_INFO ||--o{ GROWTH_MACHINE_VOTES : "casts"
     AGENDA ||--|| SPEAKERS : "features"
     AGENDA ||--o| TRANSCRIPT : "has"
     SPEAKERS ||--o{ QUESTIONS : "answers (ML-routed)"
-
     POLLS ||--o{ POLL_QUESTIONS : "defines"
     POLLS ||--o{ POLL_RESPONSES : "receives"
     POLLS ||--o{ POLL_SUBMISSION_STATUS : "tracks"
-
     POLL_QUESTIONS ||--o{ POLL_ANSWERS : "answered by"
     POLL_RESPONSES ||--o{ POLL_ANSWERS : "contains"
+    GROWTH_MACHINE_BOARD ||--o{ GROWTH_MACHINE_VOTES : "receives"
