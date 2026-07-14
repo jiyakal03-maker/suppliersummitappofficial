@@ -26,8 +26,8 @@ const BUSINESS_UNITS: BusinessUnit[] = [
     hexImage: '/Unit_1.png',
     members: 550,
     brands: [
-      { name: 'E.D. Etnyre & Co.', logo: '/images/placeholders/road.jpg', href: '#' },
-      { name: 'BearCat Manufacturing', logo: '/images/placeholders/road.jpg', href: '#' },
+      { name: 'E.D. Etnyre & Co.', logo: '/etnyre-logo.png', href: 'https://etnyre.com/' },
+      { name: 'BearCat Manufacturing', logo: '/bearcat-logo.png', href: 'https://bearcatmfg.com/' },
     ],
   },
   {
@@ -35,7 +35,7 @@ const BUSINESS_UNITS: BusinessUnit[] = [
     name: 'Heavy Metal Fabrication',
     hexImage: '/Unit_2.png',
     members: 310,
-    brands: [{ name: 'SMF', logo: '/images/placeholders/road.jpg', href: '#' }],
+    brands: [{ name: 'SMF', logo: '/smf-logo.png', href: '#' }],
   },
   {
     id: 'perforated-metal',
@@ -43,9 +43,7 @@ const BUSINESS_UNITS: BusinessUnit[] = [
     hexImage: '/Unit_3.png',
     members: 190,
     brands: [
-      { name: 'Hendrick Manufacturing', logo: '/images/placeholders/road.jpg', href: '#' },
-      { name: 'Hendrick Screen', logo: '/images/placeholders/road.jpg', href: '#' },
-      { name: 'Hendrick Architectural', logo: '/images/placeholders/road.jpg', href: '#' },
+      { name: 'Hendrick Manufacturing', logo: '/hendrick-logo.png', href: 'https://www.hendrickcorp.com/' },
     ],
   },
 ];
@@ -69,14 +67,14 @@ function UnitCardFace({
         justifyContent: 'center',
         gap: 1.5,
         px: 3,
-        bgcolor: 'black',
+        bgcolor: 'var(--color-grey-50)',
         clipPath: HEX_CLIP,
       }}
     >
-      <Typography sx={{ color: '#FFED00', fontSize: 32, fontWeight: 700, lineHeight: 1 }}>
+      <Typography sx={{ color: 'var(--color-ink)', fontSize: 32, fontWeight: 700, lineHeight: 1 }}>
         {unit.members}
       </Typography>
-      <Typography sx={{ color: '#F2F2F0', fontSize: 13, mb: showBrands ? 1 : 0 }}>
+      <Typography sx={{ color: 'var(--color-ink)', fontSize: 13, mb: showBrands ? 1 : 0 }}>
         members
       </Typography>
 
@@ -95,7 +93,7 @@ function UnitCardFace({
                 alignItems: 'center',
                 gap: 1,
                 textDecoration: 'none',
-                color: '#F2F2F0',
+                color: 'var(--color-ink)',
                 fontSize: 12.5,
                 '&:hover': { color: '#FFED00' },
               }}
@@ -104,7 +102,7 @@ function UnitCardFace({
                 component="img"
                 src={brand.logo}
                 alt={`${brand.name} logo`}
-                sx={{ width: 16, height: 16, objectFit: 'contain' }}
+                sx={{ width: 48, height: 48, objectFit: 'contain' }}
               />
               {brand.name}
             </Box>
@@ -135,8 +133,8 @@ function FlipCard({ unit, showBrandsOnBack }: { unit: BusinessUnit; showBrandsOn
         className={`summit-flip-card animate-summit-fade${flipped ? ' is-flipped' : ''}`}
         sx={{
           // flat-top hexagon aspect ratio ~1.157:1, matching source artwork
-          width: { xs: 220, md: 260 },
-          height: { xs: 190, md: 225 },
+          width: { xs: 264, md: 312 },
+          height: { xs: 228, md: 270 },
           cursor: 'pointer',
         }}
       >

@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import ScheduleRoundedIcon from "@mui/icons-material/ScheduleRounded";
-import { PageContainer, SectionHeader, ListRow, TopNav, Banner, useToast } from "@/components";
+import { PageContainer, SectionHeader, ListRow, TopNav, Banner, useToast, SummitSummary, NavLogo } from "@/components";
 import { EtnBanner } from "@/components/homepage/etn-banner"
 import { MissionVision } from "@/components/homepage/mission-vision";
 import { OurValues } from "@/components/homepage/values"
@@ -29,14 +29,22 @@ export default function Home() {
     <div className="min-h-dvh bg-background">
       <TopNav
         activeKey="about"
-        logo={<span className="text-lg font-bold leading-none text-ink">Etnyre</span>}
+        logo={<NavLogo />}
         initials="SC"
         onQrClick={() => showToast("Badge QR opened")}
         onProfile={() => showToast("Profile", "info")}
         onLogout={() => showToast("Signed out", "info")}
       />
       <PageContainer>
-        <p className="text-sm text-grey-600">Welcome back, Sarah</p>
+        <SummitSummary
+          name="Sarah"
+          stats={[
+            { label: "Attendees", value: "480" },
+            { label: "Speakers", value: "24" },
+            { label: "Sessions", value: "36" },
+            { label: "Exhibitors", value: "18" },
+          ]}
+        />
 
         <SectionHeader eyebrow="Happening now" title="Live session" />
         <Banner>
@@ -53,10 +61,12 @@ export default function Home() {
         <SectionHeader eyebrow="About Us" title="Our Brand" />
         <MissionVision />
         <OurValues />
+        <BusinessUnits />
         <SectionHeader eyebrow="Our History" title="Roadmap of the Etnyre Journey" />
         <JourneyRoadmap />
+        <SectionHeader title="Road Ahead" />
         <RoadAheadDial />
-        <BusinessUnits />
+        <EtnBanner />
       </PageContainer>
       {toast}
     </div>

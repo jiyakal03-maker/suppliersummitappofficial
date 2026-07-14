@@ -38,6 +38,7 @@ import {
   useToast,
   FeedbackStepper,
   ModeToggle,
+  NavLogo,
 } from "@/components";
 import { tokens } from "@/theme/theme";
 
@@ -71,11 +72,7 @@ export default function StyleGuide() {
     <div className="min-h-screen bg-background pb-20">
       <TopNav
         activeKey={inView ?? undefined}
-        logo={
-          <span className="flex items-center gap-2">
-            <span className="text-lg font-bold leading-none text-ink">Etnyre</span>
-          </span>
-        }
+        logo={<NavLogo />}
         initials="SC"
         onQrClick={() => showToast("Badge QR opened")}
         onProfile={() => showToast("Profile", "info")}

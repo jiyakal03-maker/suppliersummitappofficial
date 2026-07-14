@@ -11,7 +11,7 @@ import { useColorScheme } from "@mui/material/styles";
  * `.dark` class to <html>, which flips the CSS tokens in globals.css — so
  * every Tailwind-styled component follows automatically.
  */
-export function ModeToggle() {
+export function ModeToggle({ size }: { size?: "small" | "medium" }) {
   const { mode, systemMode, setMode } = useColorScheme();
   // SSR-safe hydration check without setState-in-effect
   const mounted = React.useSyncExternalStore(
@@ -19,7 +19,7 @@ export function ModeToggle() {
     () => true,
     () => false
   );
-  if (!mounted) return <IconButton aria-label="Toggle dark mode" disabled />;
+  if (!mounted) return <IconButton aria-label="Toggle dark mode" size={size} disabled />;
 
   const resolved = mode === "system" ? systemMode : mode;
   const dark = resolved === "dark";
@@ -28,8 +28,13 @@ export function ModeToggle() {
       <IconButton
         aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
         onClick={() => setMode(dark ? "light" : "dark")}
+        size={size}
       >
-        {dark ? <LightModeRoundedIcon /> : <DarkModeRoundedIcon />}
+        {dark ? (
+          <LightModeRoundedIcon fontSize={size} />
+        ) : (
+          <DarkModeRoundedIcon fontSize={size} />
+        )}
       </IconButton>
     </Tooltip>
   );

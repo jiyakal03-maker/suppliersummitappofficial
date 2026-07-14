@@ -48,9 +48,9 @@ const VISION: Statement = {
 
 export function MissionVision() {
   return (
-    <section className="relative left-1/2 right-1/2 -mx-[50vw] mt-2 w-screen">
-      <div className={`${CONTAINER} py-12 sm:py-16`}>
-        <p className="max-w-xl text-md font-medium leading-snug text-[#1C1C1E] sm:text-xl">
+    <section className="relative left-1/2 right-1/2 -mx-[50vw] -mt-2 w-screen">
+      <div className={`${CONTAINER} pb-12 pt-6 sm:pb-16 sm:pt-8`}>
+        <p className="max-w-xl text-md font-medium leading-snug text-ink sm:text-xl">
           Etnyre International is a manufacturing company passionately
           pursuing both purpose and profit.
         </p>
