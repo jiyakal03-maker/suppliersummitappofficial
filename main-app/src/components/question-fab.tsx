@@ -98,6 +98,7 @@ export function QuestionFab({
           <Fab
             aria-label="Ask a question"
             onClick={() => setOpen(true)}
+            data-tour="question-fab"
             sx={{ width: 64, height: 64 }}
           >
             <QuestionAnswerRoundedIcon sx={{ fontSize: 28 }} />

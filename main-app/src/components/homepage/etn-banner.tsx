@@ -40,25 +40,36 @@ export function EtnBanner() {
           </p>
         </div>
 
-        {/* Hexagon cluster with "Etnyre" business-unit label */}
-        <div className="relative h-[180px] w-[210px] shrink-0 sm:h-[240px] sm:w-[260px]">
-          <span className="absolute -top-9 left-1/2 -translate-x-1/2 text-xs font-semibold uppercase tracking-wide text-[#F2F2F0] dark:text-[#F2F2F0] sm:left-0 sm:translate-x-0">
-            Etnyre
-          </span>
-          <Hexagon className="absolute left-0 top-[38%] h-[42%] w-[46%]" />
-          <Hexagon className="absolute right-0 top-0 h-[42%] w-[46%]" />
-          <Hexagon className="absolute bottom-0 right-0 h-[42%] w-[46%]" />
+        {/* Hexagon cluster. Laid out with flex `gap` (not absolute
+            percentages) so spacing is easy to tighten in one place. The
+            stacked pair's flat top/bottom edges sit exactly `gap` apart,
+            but the left hexagon meets them point-to-point — the pointed
+            corners taper away from the gap, so an equal box-model gap reads
+            as visibly wider there. The negative margin on the stacked
+            column pulls it in to compensate, so both gaps read as the same
+            width. */}
+        <div className="relative shrink-0">
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            <Hexagon src="/Unit_1.png" alt="Road Maintenance & Transportation" className="h-[104px] w-[126px] sm:h-[136px] sm:w-[164px]" />
+            <div className="-ml-4 flex flex-col gap-2 sm:-ml-5 sm:gap-2.5">
+              <Hexagon src="/Unit_3.png" alt="Perforated Metal & Screen Solutions" className="h-[104px] w-[126px] sm:h-[136px] sm:w-[164px]" />
+              <Hexagon src="/Unit_2.png" alt="Heavy Metal Fabrication" className="h-[104px] w-[126px] sm:h-[136px] sm:w-[164px]" />
+            </div>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-function Hexagon({ className = "" }: { className?: string }) {
-  return (
-    <div
-      className={`border-2 border-yellow bg-[#6B6A6C] ${className}`}
-      style={{ clipPath: "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)" }}
-    />
-  );
+/**
+ * Renders a business-unit photo (/Unit_1.png etc.) that's already a
+ * pre-clipped hexagon PNG (own border, transparent background) — not
+ * clipped again here, since its hexagon is flat-top while this cluster's
+ * layout is pointy-left/right; re-clipping would crop into its transparent
+ * corners rather than the photo.
+ */
+function Hexagon({ src, alt, className = "" }: { src: string; alt: string; className?: string }) {
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={src} alt={alt} className={`object-contain ${className}`} />;
 }

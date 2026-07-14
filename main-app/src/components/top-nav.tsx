@@ -13,7 +13,6 @@ import QrCode2Icon from "@mui/icons-material/QrCode2";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { ModeToggle } from "./mode-toggle";
-import { CONTAINER } from "./layout";
 
 export interface NavItem {
   key: string;
@@ -60,13 +59,17 @@ export function TopNav({
 
   return (
     <header className="sticky top-0 z-40 border-b border-grey-200 bg-grey-50 shadow-sm">
-      <div className={`${CONTAINER} flex h-16 items-center gap-2 md:h-16`}>
+      {/* Narrower left/right inset than CONTAINER below `lg:` — the hamburger +
+          logo need to sit closer to the screen edge on mobile than the rest
+          of the page's content column. */}
+      <div className="mx-auto flex h-16 w-[92%] max-w-[1400px] items-center gap-2 px-1 lg:px-10">
         <IconButton
           aria-label="Open menu"
           className="md:hidden"
+          size="small"
           onClick={() => setDrawerOpen(true)}
         >
-          <MenuRoundedIcon />
+          <MenuRoundedIcon fontSize="small" />
         </IconButton>
 
         <Link href="/" aria-label="Home" className="flex shrink-0 items-center gap-2">
@@ -92,20 +95,20 @@ export function TopNav({
             );
           })}
         </nav>
-        <div className="flex-1 md:hidden" />
-
-        <div className="flex shrink-0 items-center gap-2 md:gap-3">
-          <ModeToggle />
+        <div className="ml-3 flex shrink-0 items-center gap-1.5 md:ml-0 md:gap-3">
+          <ModeToggle size="small" />
           <IconButton
             aria-label="My badge QR"
             onClick={onQrClick}
+            size="small"
+            data-tour="qr-scan"
             className="rounded-(--radius-control) bg-yellow text-on-yellow hover:bg-yellow-hover"
           >
-            <QrCode2Icon />
+            <QrCode2Icon fontSize="small" />
           </IconButton>
 
-          <IconButton aria-label="Profile menu" onClick={(e) => setAnchor(e.currentTarget)}>
-            <Avatar sx={{ width: 46, height: 46, fontSize: 16 }}>{initials}</Avatar>
+          <IconButton aria-label="Profile menu" size="small" data-tour="profile" onClick={(e) => setAnchor(e.currentTarget)}>
+            <Avatar sx={{ width: 42, height: 42, fontSize: 15 }}>{initials}</Avatar>
           </IconButton>
         </div>
 
