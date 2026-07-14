@@ -6,7 +6,8 @@ import { WelcomeReveal } from "@/components/homepage/welcome-reveal";
 /**
  * Route: /welcome
  * Landed on immediately after QR badge login resolves. Shows the
- * timer-based WelcomeReveal once, then redirects into Event Info.
+ * timer-based WelcomeReveal once, then redirects into Event Info, where
+ * OnboardingTour (mounted on "/") takes over if it hasn't been seen yet.
  *
  * Replace the static values below with the authenticated supplier record
  * once auth/session wiring lands (see WelcomeReveal's tableNumber note —

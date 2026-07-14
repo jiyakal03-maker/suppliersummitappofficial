@@ -101,12 +101,13 @@ export function TopNav({
             aria-label="My badge QR"
             onClick={onQrClick}
             size="small"
+            data-tour="qr-scan"
             className="rounded-(--radius-control) bg-yellow text-on-yellow hover:bg-yellow-hover"
           >
             <QrCode2Icon fontSize="small" />
           </IconButton>
 
-          <IconButton aria-label="Profile menu" size="small" onClick={(e) => setAnchor(e.currentTarget)}>
+          <IconButton aria-label="Profile menu" size="small" data-tour="profile" onClick={(e) => setAnchor(e.currentTarget)}>
             <Avatar sx={{ width: 42, height: 42, fontSize: 15 }}>{initials}</Avatar>
           </IconButton>
         </div>

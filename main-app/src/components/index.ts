@@ -12,6 +12,7 @@ export { ModeToggle } from "./mode-toggle";
 export { NavLogo } from "./nav-logo";
 export { TopNav, useScrollSpy} from "./top-nav";
 export { GlobalQuestionFab } from "./global-question-fab";
+export { OnboardingTour } from "./onboarding-tour";
 export { SummitSummary } from "./homepage/summit-summary";
 export { EtnBanner } from "./homepage/etn-banner";
 export { MissionVision } from "./homepage/mission-vision";

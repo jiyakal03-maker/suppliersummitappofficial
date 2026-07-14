@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import ScheduleRoundedIcon from "@mui/icons-material/ScheduleRounded";
-import { PageContainer, SectionHeader, ListRow, TopNav, Banner, useToast, SummitSummary, NavLogo } from "@/components";
+import { PageContainer, SectionHeader, ListRow, TopNav, Banner, useToast, SummitSummary, NavLogo, OnboardingTour } from "@/components";
 import { EtnBanner } from "@/components/homepage/etn-banner"
 import { MissionVision } from "@/components/homepage/mission-vision";
 import { OurValues } from "@/components/homepage/values"
@@ -69,6 +69,7 @@ export default function Home() {
         <EtnBanner />
       </PageContainer>
       {toast}
+      <OnboardingTour />
     </div>
   );
 }

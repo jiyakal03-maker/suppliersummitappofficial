@@ -19,7 +19,7 @@ export function ModeToggle({ size }: { size?: "small" | "medium" }) {
     () => true,
     () => false
   );
-  if (!mounted) return <IconButton aria-label="Toggle dark mode" size={size} disabled />;
+  if (!mounted) return <IconButton aria-label="Toggle dark mode" size={size} data-tour="mode-toggle" disabled />;
 
   const resolved = mode === "system" ? systemMode : mode;
   const dark = resolved === "dark";
@@ -29,6 +29,7 @@ export function ModeToggle({ size }: { size?: "small" | "medium" }) {
         aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
         onClick={() => setMode(dark ? "light" : "dark")}
         size={size}
+        data-tour="mode-toggle"
       >
         {dark ? (
           <LightModeRoundedIcon fontSize={size} />
