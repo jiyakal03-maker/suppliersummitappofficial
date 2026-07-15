@@ -21,3 +21,5 @@ export { JourneyRoadmap } from "./homepage/journey-roadmap"
 export { RoadAheadDial } from "./homepage/road-ahead-dial"
 export { BusinessUnits } from "./homepage/business-units"
 export { GrowthMachine } from "./text"
+export { AgendaTimeline, type AgendaSession } from "./agenda/agenda-timeline";
+export { SessionDetail, type AgendaSpeaker } from "./agenda/session-detail";
