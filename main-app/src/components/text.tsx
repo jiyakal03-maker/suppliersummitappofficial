@@ -1,16 +1,7 @@
 "use client"
 import * as React from 'react'
 import type { ComponentProps } from 'react'
-import {
-  Tldraw,
-  DefaultStylePanel,
-  DefaultToolbar,
-  TldrawImage,
-  type Editor,
-  type TLComponents,
-  type TLPageId,
-  type TLEditorSnapshot,
-} from 'tldraw'
+import { Tldraw, DefaultStylePanel, DefaultToolbar, type Editor, type TLComponents, type TLPageId } from 'tldraw'
 import 'tldraw/tldraw.css'
 import Button from '@mui/material/Button'
 
@@ -49,17 +40,23 @@ const PROMPT_COUNT = 5
 /**
  * Builder-only flow: 5 tldraw pages, one per "prompt" (placeholder copy for
  * now — just "Prompt 1".."Prompt 5", real prompt content comes later). A
- * Submit button advances through them in page order; after the 5th, swaps
- * the live canvas for a static side-by-side review of all 5 pages (via
- * TldrawImage — a snapshot render, not the live editor) before one final
- * submit. Runs once the store has settled to exactly these 5 pages, so a
- * fresh mount (no persistence configured, so always starts from tldraw's
- * single default page) just needs 4 more created.
+ * top banner steps through them in order — pages are truly isolated stores
+ * under the hood, so "only editable in this prompt" is enforced by tldraw
+ * itself (switching pages), not by any custom bounds-checking code.
+ *
+ * Review renders each page as a static image, generated directly from the
+ * live editor via `editor.toImage()` — not tldraw's <TldrawImage>, which
+ * reconstructs a whole separate store from a snapshot and was rendering
+ * blank for reasons that weren't worth chasing further when calling
+ * toImage() on the editor we already know has the shapes is simpler and
+ * more reliable.
  */
 function BuilderFlow({ editor }: { editor: Editor }) {
   const [pageIds, setPageIds] = React.useState<TLPageId[] | null>(null);
   const [index, setIndex] = React.useState(0);
-  const [reviewSnapshot, setReviewSnapshot] = React.useState<TLEditorSnapshot | null>(null);
+  const [mode, setMode] = React.useState<'editing' | 'review'>('editing');
+  const [thumbnails, setThumbnails] = React.useState<Record<string, string>>({});
+  const [generating, setGenerating] = React.useState(false);
   const setupRan = React.useRef(false);
 
   React.useEffect(() => {
@@ -80,11 +77,44 @@ function BuilderFlow({ editor }: { editor: Editor }) {
     editor.setCurrentPage(ids[0]);
   }, [editor]);
 
+  React.useEffect(() => {
+    return () => {
+      Object.values(thumbnails).forEach((url) => URL.revokeObjectURL(url));
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   if (!pageIds) return null;
 
-  if (reviewSnapshot) {
+  const goToPage = (i: number) => {
+    editor.setCurrentPage(pageIds[i]);
+    setIndex(i);
+  };
+
+  const enterReview = async () => {
+    setGenerating(true);
+    const entries = await Promise.all(
+      pageIds.map(async (id) => {
+        const shapeIds = [...editor.getPageShapeIds(id)];
+        if (shapeIds.length === 0) return [id, null] as const;
+        const result = await editor.toImage(shapeIds, { format: 'png', background: true });
+        return [id, result ? URL.createObjectURL(result.blob) : null] as const;
+      })
+    );
+    Object.values(thumbnails).forEach((url) => URL.revokeObjectURL(url));
+    const next: Record<string, string> = {};
+    for (const [id, url] of entries) {
+      if (url) next[id] = url;
+    }
+    setThumbnails(next);
+    setGenerating(false);
+    setMode('review');
+  };
+
+  if (mode === 'review') {
+    const allFilled = pageIds.every((id) => thumbnails[id]);
     return (
-      <div className="pointer-events-auto fixed inset-0 z-[500] overflow-auto bg-background p-6">
+      <div className="pointer-events-auto fixed inset-0 z-[500] flex flex-col items-center justify-center overflow-auto bg-background p-6">
         <h1 className="text-center text-xl font-bold text-ink">Review your board</h1>
         <p className="mt-1 text-center text-sm text-grey-600">
           All 5 prompts, side by side — submit when you&apos;re happy with them.
@@ -92,8 +122,13 @@ function BuilderFlow({ editor }: { editor: Editor }) {
         <div className="mx-auto mt-6 grid max-w-6xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {pageIds.map((id, i) => (
             <div key={id} className="flex flex-col items-center gap-2">
-              <div className="aspect-square w-full overflow-hidden rounded-(--radius-card) border border-grey-200 bg-surface">
-                <TldrawImage snapshot={reviewSnapshot} pageId={id} />
+              <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-(--radius-card) border border-grey-200 bg-surface">
+                {thumbnails[id] ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={thumbnails[id]} alt={`Prompt ${i + 1}`} className="h-full w-full object-contain" />
+                ) : (
+                  <p className="px-3 text-center text-xs text-grey-500">Nothing drawn yet</p>
+                )}
               </div>
               <p className="text-xs font-semibold text-ink">Prompt {i + 1}</p>
               <Button
@@ -101,9 +136,8 @@ function BuilderFlow({ editor }: { editor: Editor }) {
                 variant="text"
                 color="secondary"
                 onClick={() => {
-                  editor.setCurrentPage(id);
-                  setIndex(i);
-                  setReviewSnapshot(null);
+                  setMode('editing');
+                  goToPage(i);
                 }}
               >
                 Edit
@@ -111,8 +145,16 @@ function BuilderFlow({ editor }: { editor: Editor }) {
             </div>
           ))}
         </div>
-        <div className="mt-6 flex justify-center">
-          <Button variant="contained" color="primary" onClick={() => alert('Board submitted!')}>
+        <div className="mt-6 flex flex-col items-center gap-2">
+          {!allFilled && (
+            <p className="text-xs text-grey-500">Every prompt needs a drawing before you can submit.</p>
+          )}
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={!allFilled}
+            onClick={() => alert('Board submitted!')}
+          >
             Submit board
           </Button>
         </div>
@@ -133,17 +175,10 @@ function BuilderFlow({ editor }: { editor: Editor }) {
           size="small"
           variant="contained"
           color="primary"
-          onClick={() => {
-            if (isLast) {
-              setReviewSnapshot(editor.getSnapshot());
-            } else {
-              const next = index + 1;
-              editor.setCurrentPage(pageIds[next]);
-              setIndex(next);
-            }
-          }}
+          disabled={generating}
+          onClick={() => (isLast ? enterReview() : goToPage(index + 1))}
         >
-          {isLast ? 'Finish' : 'Submit'}
+          {isLast ? (generating ? 'Preparing…' : 'Finish') : 'Submit'}
         </Button>
       </div>
     </div>
@@ -156,8 +191,8 @@ function BuilderFlow({ editor }: { editor: Editor }) {
  * to put the editor in view-only mode (no shape creation/editing, no
  * toolbar actions), used for Spectators so only the Builder can draw.
  * `hideUi` also hides the (repositioned) panels entirely for Spectators.
- * BuilderFlow (the 5-prompt stepper + review) only mounts when NOT
- * readOnly — Spectators just watch whatever page the Builder has open.
+ * BuilderFlow (the 5-prompt stepper + review) only mounts when NOT readOnly —
+ * Spectators just watch whatever page the Builder currently has open.
  */
 export function GrowthMachine({ readOnly = false }: { readOnly?: boolean }) {
   const [editor, setEditor] = React.useState<Editor | null>(null);
