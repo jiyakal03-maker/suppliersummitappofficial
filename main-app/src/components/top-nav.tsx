@@ -30,6 +30,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: "about", label: "About us", href: "/#about" },
   { key: "agenda", label: "Agenda & speakers", href: "/agenda" },
   { key: "polls", label: "Polls & feedback", href: "/polls" },
+  { key: "growth-machine", label: "Growth Machine", href: "/growth-machine" },
 ];
 
 /**

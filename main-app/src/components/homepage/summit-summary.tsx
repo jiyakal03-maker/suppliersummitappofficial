@@ -18,7 +18,7 @@ export function SummitSummary({
         Welcome back {name} to the Supplier Summit 2026
       </h1>
       <p className="mt-1 text-sm text-grey-600">
-        Two days of keynotes, roadmap sessions, and supplier collaboration.
+        One day of keynotes, roadmap sessions, and supplier collaboration.
       </p>
 
       <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
