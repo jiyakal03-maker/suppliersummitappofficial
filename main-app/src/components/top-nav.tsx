@@ -12,6 +12,7 @@ import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import QrCode2Icon from "@mui/icons-material/QrCode2";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
+import LockRoundedIcon from "@mui/icons-material/LockRounded";
 import { ModeToggle } from "./mode-toggle";
 
 export interface NavItem {
@@ -31,6 +32,12 @@ const NAV_ITEMS: NavItem[] = [
   { key: "agenda", label: "Agenda & speakers", href: "/agenda" },
   { key: "polls", label: "Polls & feedback", href: "/polls" },
   { key: "growth-machine", label: "Growth Machine", href: "/growth-machine" },
+  {
+    key: "admin",
+    label: "Administration",
+    href: "/admin",
+    icon: <LockRoundedIcon sx={{ fontSize: 16 }} />,
+  },
 ];
 
 /**
@@ -85,12 +92,13 @@ export function TopNav({
                 key={item.key}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`flex items-center self-stretch border-b-[3px] px-0.5 text-sm transition-colors ${
+                className={`flex items-center gap-1.5 self-stretch border-b-[3px] px-0.5 text-sm transition-colors ${
                   active
                     ? "border-yellow font-semibold text-ink"
                     : "border-transparent text-grey-600 hover:text-ink"
                 }`}
               >
+                {item.icon}
                 {item.label}
               </Link>
             );

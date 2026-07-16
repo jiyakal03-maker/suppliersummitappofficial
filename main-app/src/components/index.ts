@@ -23,3 +23,6 @@ export { BusinessUnits } from "./homepage/business-units"
 export { GrowthMachine } from "./text"
 export { AgendaTimeline, type AgendaSession } from "./agenda/agenda-timeline";
 export { SessionDetail, type AgendaSpeaker } from "./agenda/session-detail";
+export { AdminGate, useAdminUnlocked } from "./admin/admin-gate";
+export { AddressableList, sortAddressable, type AddressableItem } from "./admin/addressable-list";
+export { VoteLeaderboard, type VoteEntry } from "./admin/vote-leaderboard";
