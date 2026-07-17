@@ -42,17 +42,37 @@ import {
 } from "@/components";
 import { tokens } from "@/theme/theme";
 
-const swatches: Array<{ name: string; hex: string; note?: string }> = [
-  { name: "Yellow", hex: tokens.yellow, note: "primary — ink text only" },
-  { name: "Yellow hover", hex: tokens.yellowHover },
-  { name: "Yellow tint", hex: tokens.yellowTint, note: "banners" },
-  { name: "Ink", hex: tokens.ink, note: "text, secondary actions" },
-  { name: "Grey 400", hex: tokens.grey[400], note: "deck grey" },
-  { name: "Grey 100", hex: tokens.grey[100] },
-  { name: "Grey 50", hex: tokens.grey[50], note: "surfaces" },
-  { name: "Amber 500", hex: tokens.amber[500], note: "errors / warnings" },
-  { name: "Amber 100", hex: tokens.amber[100], note: "error backgrounds" },
-  { name: "Amber 900", hex: tokens.amber[900], note: "error text" },
+/**
+ * Light hex from `tokens` (theme.ts, mirrors globals.css :root); darkHex is
+ * the literal from globals.css's .dark block — written out here rather
+ * than read live via CSS vars, since the whole point of this table is to
+ * show both values side by side regardless of which mode the page is
+ * currently in.
+ */
+const swatches: Array<{ name: string; hex: string; darkHex: string; note?: string }> = [
+  { name: "Yellow", hex: tokens.yellow, darkHex: "#F0E54C", note: "primary — ink text only" },
+  { name: "Yellow hover", hex: tokens.yellowHover, darkHex: "#EDDF1D" },
+  { name: "Yellow pressed", hex: tokens.yellowPressed, darkHex: tokens.yellowPressed, note: "unchanged in dark mode" },
+  { name: "Yellow tint", hex: tokens.yellowTint, darkHex: "#2B2703", note: "banners" },
+  { name: "On-yellow", hex: tokens.onYellow, darkHex: tokens.onYellow, note: "content on yellow — never flips" },
+  { name: "Ink", hex: tokens.ink, darkHex: "#E2E2E2", note: "text" },
+  { name: "Secondary accent", hex: tokens.secondaryAccent, darkHex: "#5A5A60", note: "dark-mode-palette.css — distinct from ink" },
+  { name: "Grey 800", hex: tokens.grey[800], darkHex: "#E4E3E6" },
+  { name: "Grey 700", hex: tokens.grey[700], darkHex: "#C5C4C8" },
+  { name: "Grey 600", hex: tokens.grey[600], darkHex: "#A9A8AC" },
+  { name: "Grey 500", hex: tokens.grey[500], darkHex: "#7F7F7F" },
+  { name: "Grey 400", hex: tokens.grey[400], darkHex: "#545355", note: "deck grey" },
+  { name: "Grey 300", hex: tokens.grey[300], darkHex: "#45454B" },
+  { name: "Grey 200", hex: tokens.grey[200], darkHex: "#333338" },
+  { name: "Grey 100", hex: tokens.grey[100], darkHex: "#141311" },
+  { name: "Grey 50", hex: tokens.grey[50], darkHex: "#201F1C", note: "surfaces" },
+  { name: "Amber 900", hex: tokens.amber[900], darkHex: "#E9A057", note: "error text" },
+  { name: "Amber 700", hex: tokens.amber[700], darkHex: "#FBA94C" },
+  { name: "Amber 500", hex: tokens.amber[500], darkHex: "#D57417", note: "errors / warnings" },
+  { name: "Amber 300", hex: tokens.amber[300], darkHex: tokens.amber[300], note: "unchanged in dark mode" },
+  { name: "Amber 100", hex: tokens.amber[100], darkHex: "#3B2A14", note: "error backgrounds" },
+  { name: "Background", hex: "#FFFFFF", darkHex: "#121212" },
+  { name: "Surface", hex: "#FFFFFF", darkHex: "#201F1C", note: "cards, bars, sheets" },
 ];
 
 export default function StyleGuide() {
@@ -87,14 +107,23 @@ export default function StyleGuide() {
           Etnyre supplier summit — tokens and components. Yellow, ink, grey, and candy-corn amber only.
         </p>
 
-        <SectionHeader eyebrow="Foundation" title="Color tokens" />
+        <SectionHeader
+          eyebrow="Foundation"
+          title="Color tokens"
+          action={<span className="text-[11px] font-semibold uppercase tracking-wide text-grey-500">Light · Dark</span>}
+        />
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {swatches.map((s) => (
             <div key={s.name} className="overflow-hidden rounded-(--radius-control) border border-grey-200">
-              <div className="h-12" style={{ backgroundColor: s.hex }} />
+              <div className="flex h-12">
+                <div className="flex-1" style={{ backgroundColor: s.hex }} />
+                <div className="flex-1" style={{ backgroundColor: s.darkHex }} />
+              </div>
               <div className="px-2.5 py-1.5">
                 <p className="text-[12px] font-semibold text-ink">{s.name}</p>
-                <p className="font-mono text-[11px] text-grey-600">{s.hex}</p>
+                <p className="font-mono text-[11px] text-grey-600">
+                  {s.hex} <span className="text-grey-400">/</span> {s.darkHex}
+                </p>
                 {s.note && <p className="text-[11px] text-grey-500">{s.note}</p>}
               </div>
             </div>

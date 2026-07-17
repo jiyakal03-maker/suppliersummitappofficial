@@ -2,6 +2,7 @@
 import * as React from 'react'
 import type { ComponentProps } from 'react'
 import { Tldraw, DefaultStylePanel, DefaultToolbar, type Editor, type TLComponents, type TLPageId } from 'tldraw'
+import { toRichText } from '@tldraw/tlschema'
 import 'tldraw/tldraw.css'
 import Button from '@mui/material/Button'
 
@@ -35,14 +36,28 @@ const components: TLComponents = {
   Toolbar: RepositionedToolbar,
 }
 
-const PROMPT_COUNT = 5
+const PROMPT_HEADINGS = [
+  'Engine: What drives growth?',
+  'Fuel: What information or support is needed?',
+  'Gears: How do we work together?',
+  'Brakes: What slows us down?',
+  'Turbo boost: What one big idea could accelerate growth?',
+]
+const PROMPT_COUNT = PROMPT_HEADINGS.length
+// Position/size of each page's locked heading shape — centered on the
+// origin so it's a stable, known target for zoomToBounds regardless of
+// where the shape actually sits in a given page's coordinate space.
+const HEADING_BOUNDS = { x: -350, y: -260, w: 700, h: 110 }
 
 /**
- * Builder-only flow: 5 tldraw pages, one per "prompt" (placeholder copy for
- * now — just "Prompt 1".."Prompt 5", real prompt content comes later). A
+ * Builder-only flow: 5 tldraw pages, one per prompt (see PROMPT_HEADINGS). A
  * top banner steps through them in order — pages are truly isolated stores
  * under the hood, so "only editable in this prompt" is enforced by tldraw
  * itself (switching pages), not by any custom bounds-checking code.
+ *
+ * Each page is pre-filled with its heading as a locked geo shape
+ * (isLocked: true) — visible and part of the canvas/exports, but the
+ * Builder can't select, move, or edit it, only draw around it.
  *
  * Review renders each page as a static image, generated directly from the
  * live editor via `editor.toImage()` — not tldraw's <TldrawImage>, which
@@ -73,8 +88,37 @@ function BuilderFlow({ editor }: { editor: Editor }) {
       }
     }
     const ids = editor.getPages().slice(0, PROMPT_COUNT).map((p) => p.id);
+
+    editor.createShapes(
+      ids.map((pageId, i) => ({
+        type: 'geo' as const,
+        parentId: pageId,
+        x: HEADING_BOUNDS.x,
+        y: HEADING_BOUNDS.y,
+        isLocked: true,
+        props: {
+          geo: 'rectangle' as const,
+          w: HEADING_BOUNDS.w,
+          h: HEADING_BOUNDS.h,
+          dash: 'solid' as const,
+          fill: 'none' as const,
+          color: 'black' as const,
+          size: 'l' as const,
+          align: 'middle' as const,
+          verticalAlign: 'middle' as const,
+          richText: toRichText(PROMPT_HEADINGS[i]),
+        },
+      }))
+    );
+
     setPageIds(ids);
     editor.setCurrentPage(ids[0]);
+    // A fresh page's default camera doesn't necessarily center the origin
+    // in the viewport (it can leave world (0,0) at the viewport's corner),
+    // so the heading — placed at negative coordinates to sit centered
+    // around the origin — was landing outside the visible area. Snap
+    // (no animation) to frame it on every page, not just the first.
+    editor.zoomToBounds(HEADING_BOUNDS, { inset: 200, targetZoom: 1 });
   }, [editor]);
 
   React.useEffect(() => {
@@ -89,6 +133,9 @@ function BuilderFlow({ editor }: { editor: Editor }) {
   const goToPage = (i: number) => {
     editor.setCurrentPage(pageIds[i]);
     setIndex(i);
+    // Each page has its own independent camera — without this, only the
+    // first page (framed during setup) would reliably show its heading.
+    editor.zoomToBounds(HEADING_BOUNDS, { inset: 200, targetZoom: 1 });
   };
 
   const enterReview = async () => {
@@ -96,7 +143,10 @@ function BuilderFlow({ editor }: { editor: Editor }) {
     const entries = await Promise.all(
       pageIds.map(async (id) => {
         const shapeIds = [...editor.getPageShapeIds(id)];
-        if (shapeIds.length === 0) return [id, null] as const;
+        // Every page always has at least the locked heading shape — "empty"
+        // means nothing else has been drawn, not literally zero shapes.
+        const hasDrawing = shapeIds.some((sid) => !editor.getShape(sid)?.isLocked);
+        if (!hasDrawing) return [id, null] as const;
         const result = await editor.toImage(shapeIds, { format: 'png', background: true });
         return [id, result ? URL.createObjectURL(result.blob) : null] as const;
       })
@@ -192,7 +242,19 @@ function BuilderFlow({ editor }: { editor: Editor }) {
  * toolbar actions), used for Spectators so only the Builder can draw.
  * `hideUi` also hides the (repositioned) panels entirely for Spectators.
  * BuilderFlow (the 5-prompt stepper + review) only mounts when NOT readOnly —
- * Spectators just watch whatever page the Builder currently has open.
+ * Spectators just watch whatever page the Builder currently has open, and
+ * can scribble with tldraw's built-in Laser tool — a trail drawn via
+ * `editor.scribbles`, not real shapes, so it auto-fades and never touches
+ * the document store (works even under isReadonly, which blocks every
+ * shape-mutating method but not scribbles). Locked on as their only tool
+ * since `hideUi` hides the toolbar they'd otherwise use to switch tools.
+ *
+ * Caveat: there's no multiplayer sync server wired up (see the note on the
+ * board route) — Builder and Spectator each have their own local, isolated
+ * store in their own browser tab, so a Spectator's laser trail currently
+ * only appears on their own screen, not the Builder's. Making it actually
+ * cross-browser needs a real sync backend (e.g. tldraw sync), which is a
+ * separate, bigger task than this component.
  */
 export function GrowthMachine({ readOnly = false }: { readOnly?: boolean }) {
   const [editor, setEditor] = React.useState<Editor | null>(null);
@@ -204,6 +266,7 @@ export function GrowthMachine({ readOnly = false }: { readOnly?: boolean }) {
         components={components}
         onMount={(ed: Editor) => {
           ed.updateInstanceState({ isReadonly: readOnly });
+          if (readOnly) ed.setCurrentTool('laser');
           setEditor(ed);
         }}
       />

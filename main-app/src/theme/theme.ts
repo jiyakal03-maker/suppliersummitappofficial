@@ -9,6 +9,7 @@ export const tokens = {
   yellowTint: "#FFFBD1",
   onYellow: "#1C1C1E",
   ink: "#1C1C1E",
+  secondaryAccent: "#1C1C1E",
   grey: {
     800: "#2A2A2E",
     700: "#4A4A4C",
@@ -40,6 +41,7 @@ const v = {
   background: "var(--background)",
   onYellow: "var(--summit-on-yellow)",
   yellowTint: "var(--summit-yellow-tint)",
+  secondaryAccent: "var(--summit-secondary-accent)",
   grey: (n: 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800) => `var(--summit-grey-${n})`,
   amber: (n: 100 | 300 | 500 | 700 | 900) => `var(--summit-amber-${n})`,
 };
@@ -47,8 +49,11 @@ const v = {
 /**
  * Conventions
  * - primary   = brand yellow. Content on yellow is ALWAYS #1C1C1E (on-yellow),
- *   in both light and dark mode.
- * - secondary = ink (flips to light in dark mode).
+ *   in both light and dark mode — but the yellow itself now flips to a
+ *   muted #F0E54C in dark mode (dark-mode-palette.css handoff).
+ * - secondary = ink (flips to light in dark mode). Distinct from the new
+ *   --summit-secondary-accent token (v.secondaryAccent) added by the same
+ *   handoff — that one's a muted grey, not wired into this MUI role.
  * - error/warning = candy-corn amber ramp (no red in this brand).
  * - success   = fixed dark chip (#2A2A2E) with yellow icon in BOTH modes —
  *   there is no green in the brand, and the dark pill reads on any surface.
@@ -74,15 +79,17 @@ const theme = createTheme({
     },
     dark: {
       palette: {
-        primary: { main: tokens.yellow, dark: tokens.yellowPressed, light: "#35310E", contrastText: tokens.onYellow },
-        secondary: { main: "#F2F2F0", contrastText: tokens.ink },
+        // dark-mode-palette.css / dark-mode-palette (1).css handoff, 1:1 swap
+        // (mirrors globals.css's .dark block — see there for the full ramp).
+        primary: { main: "#F0E54C", dark: tokens.yellowPressed, light: "#2B2703", contrastText: tokens.onYellow },
+        secondary: { main: "#E2E2E2", contrastText: tokens.ink },
         error: { main: tokens.amber[300], dark: "#FBA94C", light: "#3B2A14", contrastText: tokens.ink },
         warning: { main: tokens.amber[300], dark: "#FBA94C", light: "#3B2A14", contrastText: tokens.ink },
-        success: { main: "#F2F2F0", contrastText: tokens.ink },
+        success: { main: "#E2E2E2", contrastText: tokens.ink },
         info: { main: "#C5C4C8", contrastText: tokens.ink },
-        text: { primary: "#F2F2F0", secondary: "#A9A8AC", disabled: "#6E6D72" },
+        text: { primary: "#E2E2E2", secondary: "#A9A8AC", disabled: "#545355" },
         divider: "#333338",
-        background: { default: "#151517", paper: "#1F1F22" },
+        background: { default: "#121212", paper: "#201F1C" },
       },
     },
   },

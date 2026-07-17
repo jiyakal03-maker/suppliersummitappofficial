@@ -9,13 +9,22 @@
    the MUI theme (src/theme/theme.ts) references the same vars,
    so flipping them under .dark switches BOTH systems at once. */
 :root {
-  /* Brand yellow — identical in both modes; content on yellow
-     always uses --summit-on-yellow (never flips) */
+  /* Brand yellow — content on yellow always uses --summit-on-yellow
+     (never flips); the yellow itself now flips to a muted dark-mode
+     tone (see .dark) per the dark-mode-palette.css design handoff. */
   --summit-yellow: #ffed00;
   --summit-yellow-hover: #f0e000;
   --summit-yellow-pressed: #ddce00;
   --summit-yellow-tint: #fffbd1;
   --summit-on-yellow: #1c1c1e;
+
+  /* New in the dark-mode-palette handoff: a muted mid-grey accent distinct
+     from ink/text (which stays --summit-ink) — not wired into MUI's own
+     `secondary` palette role to avoid colliding with its existing meaning
+     (ink-based, used all over as color="secondary" on outlined/text
+     buttons). Reach for this only where the handoff's "secondary" swatch
+     is specifically wanted. */
+  --summit-secondary-accent: #1c1c1e;
 
   /* Ink & grey ramp (deck charcoal + #ABAAAC theme grey).
      "ink" = foreground; the ramp runs surface → text. */
@@ -48,25 +57,30 @@
 .dark {
   color-scheme: dark;
 
-  --summit-yellow-tint: #35310e;
+  /* dark-mode-palette.css / dark-mode-palette (1).css handoff, 1:1 swap */
+  --summit-yellow: #f0e54c;
+  --summit-yellow-hover: #eddf1d;
+  --summit-yellow-tint: #2b2703;
+  --summit-secondary-accent: #5a5a60;
 
-  --summit-ink: #f2f2f0;
+  --summit-ink: #e2e2e2;
   --summit-grey-800: #e4e3e6;
   --summit-grey-700: #c5c4c8;
   --summit-grey-600: #a9a8ac;
-  --summit-grey-500: #8a898b;
-  --summit-grey-400: #6e6d72;
+  --summit-grey-500: #7f7f7f;
+  --summit-grey-400: #545355;
   --summit-grey-300: #45454b;
   --summit-grey-200: #333338;
-  --summit-grey-100: #26262a;
-  --summit-grey-50: #1f1f22;
+  --summit-grey-100: #141311;
+  --summit-grey-50: #201f1c;
 
   --summit-amber-100: #3b2a14;
+  --summit-amber-500: #d57417;
   --summit-amber-700: #fba94c;
-  --summit-amber-900: #fdc788;
+  --summit-amber-900: #e9a057;
 
-  --background: #151517;
-  --summit-surface: #1f1f22;
+  --background: #121212;
+  --summit-surface: #201f1c;
   --foreground: var(--summit-ink);
 }
 
@@ -82,6 +96,7 @@
   --color-on-yellow: var(--summit-on-yellow);
 
   --color-ink: var(--summit-ink);
+  --color-secondary-accent: var(--summit-secondary-accent);
   --color-grey-800: var(--summit-grey-800);
   --color-grey-700: var(--summit-grey-700);
   --color-grey-600: var(--summit-grey-600);
