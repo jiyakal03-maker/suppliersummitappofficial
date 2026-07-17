@@ -15,7 +15,10 @@ import Button from '@mui/material/Button'
  */
 function RepositionedStylePanel(props: ComponentProps<typeof DefaultStylePanel>) {
   return (
-    <div style={{ position: 'fixed', top: '50%', right: 8, transform: 'translateY(-50%)', pointerEvents: 'all' }}>
+    <div
+      data-tour="style-panel"
+      style={{ position: 'fixed', top: '50%', right: 8, transform: 'translateY(-50%)', pointerEvents: 'all' }}
+    >
       <DefaultStylePanel {...props} />
     </div>
   )
@@ -23,7 +26,10 @@ function RepositionedStylePanel(props: ComponentProps<typeof DefaultStylePanel>)
 
 function RepositionedToolbar(props: ComponentProps<typeof DefaultToolbar>) {
   return (
-    <div style={{ position: 'fixed', bottom: 72, left: '50%', transform: 'translateX(-50%)', pointerEvents: 'all' }}>
+    <div
+      data-tour="toolbar"
+      style={{ position: 'fixed', bottom: 72, left: '50%', transform: 'translateX(-50%)', pointerEvents: 'all' }}
+    >
       <DefaultToolbar {...props} />
     </div>
   )
@@ -216,7 +222,10 @@ function BuilderFlow({ editor }: { editor: Editor }) {
 
   return (
     <div className="pointer-events-none fixed inset-x-0 z-[400] flex justify-center" style={{ top: 64 }}>
-      <div className="pointer-events-auto flex items-center gap-3 rounded-(--radius-card) bg-surface px-4 py-2 shadow-lg">
+      <div
+        data-tour="prompt-banner"
+        className="pointer-events-auto flex items-center gap-3 rounded-(--radius-card) bg-surface px-4 py-2 shadow-lg"
+      >
         <span className="text-xs font-semibold uppercase tracking-wide text-grey-500">
           Prompt {index + 1} of {PROMPT_COUNT}
         </span>
