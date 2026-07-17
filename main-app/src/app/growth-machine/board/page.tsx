@@ -2,7 +2,7 @@
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Button from "@mui/material/Button";
-import { GrowthMachine } from "@/components";
+import { GrowthMachine, BoardOnboardingTour } from "@/components";
 
 /**
  * Route: /growth-machine/board?role=builder|spectator
@@ -25,6 +25,7 @@ function Board() {
         <Button
           variant="contained"
           className="pointer-events-auto"
+          data-tour="leave-board"
           onClick={() => router.push("/growth-machine")}
           sx={{
             bgcolor: "#000",
@@ -42,6 +43,7 @@ function Board() {
       </div>
 
       <GrowthMachine readOnly={!isBuilder} />
+      <BoardOnboardingTour role={role} />
     </div>
   );
 }
