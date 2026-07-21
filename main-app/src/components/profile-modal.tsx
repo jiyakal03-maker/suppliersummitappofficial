@@ -27,13 +27,21 @@ function initialsOf(name: string) {
     .toUpperCase();
 }
 
+// Maps a ShareField.id to the "user" column that stores its toggle.
+const SHARE_COLUMN = {
+  email: "share_email",
+  phone: "share_phone",
+  company: "share_company",
+} as const;
+
 /**
  * "My profile" dialog — real signed-in user's contact info, with the same
  * per-field share toggles as the style guide's "Contact sharing" section.
- * Toggle state is local/session-only (no share-preference column exists
- * on "user" yet), matching how the style guide's own reference treats it.
+ * Toggles read from and write to user.share_email/share_phone/share_company,
+ * so they persist across reloads instead of resetting each open.
  */
 export function ProfileModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [userId, setUserId] = React.useState<string | null>(null);
   const [profile, setProfile] = React.useState<Profile | null>(null);
   const [fields, setFields] = React.useState<ShareField[]>([]);
   const [status, setStatus] = React.useState<"idle" | "loading" | "error">("idle");
@@ -54,7 +62,7 @@ export function ProfileModal({ open, onClose }: { open: boolean; onClose: () => 
 
       const { data, error } = await supabase
         .from("user")
-        .select("first_name, last_name, company, email, phone")
+        .select("first_name, last_name, company, email, phone, share_email, share_phone, share_company")
         .eq("user_id", authUser.id)
         .single();
 
@@ -64,15 +72,29 @@ export function ProfileModal({ open, onClose }: { open: boolean; onClose: () => 
       }
 
       const name = [data.first_name, data.last_name].filter(Boolean).join(" ") || "Attendee";
+      setUserId(authUser.id);
       setProfile({ name, initials: initialsOf(name), company: data.company });
       setFields([
-        { id: "email", label: "Email", value: data.email ?? "Not set", shared: Boolean(data.email) },
-        { id: "phone", label: "Phone", value: data.phone ?? "Not set", shared: Boolean(data.phone) },
-        { id: "company", label: "Company", value: data.company ?? "Not set", shared: Boolean(data.company) },
+        { id: "email", label: "Email", value: data.email ?? "Not set", shared: data.share_email },
+        { id: "phone", label: "Phone", value: data.phone ?? "Not set", shared: data.share_phone },
+        { id: "company", label: "Company", value: data.company ?? "Not set", shared: data.share_company },
       ]);
       setStatus("idle");
     })();
   }, [open, profile]);
+
+  const handleToggle = async (id: string, shared: boolean) => {
+    setFields((fs) => fs.map((f) => (f.id === id ? { ...f, shared } : f)));
+    if (!userId) return;
+    const column = SHARE_COLUMN[id as keyof typeof SHARE_COLUMN];
+    if (!column) return;
+    const supabase = createClient();
+    const { error } = await supabase.from("user").update({ [column]: shared }).eq("user_id", userId);
+    if (error) {
+      // Revert on failure so the switch never lies about what's saved.
+      setFields((fs) => fs.map((f) => (f.id === id ? { ...f, shared: !shared } : f)));
+    }
+  };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
@@ -98,12 +120,7 @@ export function ProfileModal({ open, onClose }: { open: boolean; onClose: () => 
                 {profile.company && <p className="truncate text-[13px] text-grey-600">{profile.company}</p>}
               </div>
             </div>
-            <ContactShareList
-              fields={fields}
-              onToggle={(id, shared) =>
-                setFields((fs) => fs.map((f) => (f.id === id ? { ...f, shared } : f)))
-              }
-            />
+            <ContactShareList fields={fields} onToggle={handleToggle} />
           </div>
         )}
       </DialogContent>
