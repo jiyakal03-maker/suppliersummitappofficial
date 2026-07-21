@@ -1,0 +1,142 @@
+erDiagram
+    USER {
+        uuid user_id PK
+        varchar first_name
+        varchar last_name
+        varchar phone
+        varchar email "unique"
+        varchar company
+        user_role role "enum: attendee | speaker | analytics | admin"
+        text pin "hashed via pgcrypto trigger"
+    }
+    SPEAKERS {
+        uuid speaker_id PK
+        uuid user_id FK "on delete set null"
+        uuid event_id FK "on delete set null"
+        text bio
+    }
+    EVENT {
+        uuid event_id PK
+        varchar event_name
+        varchar duration
+        varchar topic
+        text description
+        agenda_status status "enum: upcoming | live | completed"
+        boolean status_override "true if manually set by analytics/admin"
+        timestamptz start_time
+        timestamptz end_time
+        uuid speaker_id FK "nullable, on delete set null"
+    }
+    TRANSCRIPT {
+        uuid event_id PK "FK is the PK - 1:1, cannot exist without event"
+        text transcript_text
+    }
+    QUESTION_GROUPS {
+        uuid group_id PK
+        varchar topic
+        text composed_question "single merged question shown to speaker"
+        varchar status
+        uuid redirect_to FK "references USER - ML-determined or admin/analytics assigned"
+        uuid speaker_id FK "nullable"
+        boolean checked
+        text answer_text "optional"
+        timestamptz answered_at "auto-set via trigger when status = answered"
+        timestamptz created_at
+    }
+    QUESTIONS {
+        uuid question_id PK
+        varchar topic "attendee's optional tag on submission"
+        text submission_info
+        uuid submitter_id FK "on delete set null"
+        uuid group_id FK "not null - every question is grouped at insertion"
+        varchar status "propagated from group"
+        boolean checked "propagated from group"
+    }
+    POLLS {
+        uuid poll_id PK
+        varchar poll_name
+        text description
+        poll_status status "enum: locked | live | unlocked"
+        boolean is_anonymous
+        uuid event_id FK "nullable - polls may be standalone"
+        timestamptz created_at
+    }
+    POLL_QUESTIONS {
+        uuid poll_question_id PK
+        uuid poll_id FK
+        text question_text
+        question_type question_type "enum: multiple_choice | text | rating"
+        text options "nullable, for multiple_choice"
+    }
+    POLL_RESPONSES {
+        uuid poll_response_id PK
+        uuid poll_id FK
+        uuid respondent_id FK "nullable - null only if poll.is_anonymous = true"
+        timestamptz submitted_at
+    }
+    POLL_ANSWERS {
+        uuid poll_answer_id PK
+        uuid poll_question_id FK
+        uuid poll_response_id FK
+        text answer_value
+    }
+    POLL_SUBMISSION_STATUS {
+        uuid submission_status_id PK
+        uuid poll_id FK
+        uuid user_id FK
+        boolean submitted "tracked even if anonymous - completion only"
+    }
+    EVENT_TABLES {
+        uuid table_id PK
+        uuid event_id FK
+        varchar table_name
+    }
+    EVENT_TABLE_MEMBERS {
+        uuid table_id PK,FK
+        uuid user_id PK,FK
+        boolean is_builder "only one builder per table can submit GM entries"
+    }
+    GROWTH_MACHINE_ENTRIES {
+        uuid entry_id PK
+        uuid table_id FK
+        machine_part part "enum: engine | fuel | gears | brakes | turbo_boost"
+        text content "sticky-note style, multiple per part per table"
+        uuid submitted_by FK "must be the table's designated builder"
+        timestamptz created_at
+    }
+    GROWTH_MACHINE_VOTES {
+        uuid voter_uid PK,FK "individual vote, not team-based"
+        uuid event_id PK,FK
+        uuid table_id FK "which table's machine they voted for"
+        timestamptz voted_at
+    }
+
+    USER ||--o{ SPEAKERS : "is a"
+    USER ||--o{ QUESTIONS : "submits"
+    USER ||--o{ QUESTION_GROUPS : "may be redirect target"
+    USER ||--o{ POLL_RESPONSES : "submits (if not anonymous)"
+    USER ||--o{ POLL_SUBMISSION_STATUS : "tracked for"
+    USER ||--o{ EVENT_TABLE_MEMBERS : "assigned to"
+    USER ||--o{ GROWTH_MACHINE_ENTRIES : "submits (if builder)"
+    USER ||--o{ GROWTH_MACHINE_VOTES : "casts"
+
+    EVENT ||--o| SPEAKERS : "features"
+    EVENT ||--o| TRANSCRIPT : "has"
+    EVENT ||--o{ POLLS : "may host"
+    EVENT ||--o{ EVENT_TABLES : "has"
+    EVENT ||--o{ GROWTH_MACHINE_VOTES : "scoped to"
+
+    SPEAKERS ||--o{ QUESTION_GROUPS : "answers (ML-routed or manual)"
+    SPEAKERS ||--o{ EVENT : "assigned to"
+
+    QUESTION_GROUPS ||--o{ QUESTIONS : "contains"
+
+    POLLS ||--o{ POLL_QUESTIONS : "defines"
+    POLLS ||--o{ POLL_RESPONSES : "receives"
+    POLLS ||--o{ POLL_SUBMISSION_STATUS : "tracks"
+    POLL_QUESTIONS ||--o{ POLL_ANSWERS : "answered by"
+    POLL_RESPONSES ||--o{ POLL_ANSWERS : "contains"
+
+    EVENT_TABLES ||--o{ EVENT_TABLE_MEMBERS : "has roster"
+    EVENT_TABLES ||--o{ GROWTH_MACHINE_ENTRIES : "builder submits to"
+    EVENT_TABLES ||--o{ GROWTH_MACHINE_VOTES : "receives votes"
