@@ -3,7 +3,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import ConstructionRoundedIcon from "@mui/icons-material/ConstructionRounded";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
-import { PageContainer, SectionHeader, TopNav, NavLogo, useToast } from "@/components";
+import { PageContainer, SectionHeader, TopNav, NavLogo, useToast, useProfileModal } from "@/components";
 import { useSignOut } from "@/lib/supabase/use-sign-out";
 
 /**
@@ -63,6 +63,7 @@ function RoleCard({
 export default function GmAltPage() {
   const { toast, showToast } = useToast();
   const handleLogout = useSignOut();
+  const { profileModal, openProfile } = useProfileModal();
   const router = useRouter();
 
   return (
@@ -72,7 +73,7 @@ export default function GmAltPage() {
         logo={<NavLogo />}
         initials="SC"
         onQrClick={() => showToast("Badge QR opened")}
-        onProfile={() => showToast("Profile", "info")}
+        onProfile={openProfile}
         onLogout={handleLogout}
       />
       <PageContainer>
@@ -97,6 +98,7 @@ export default function GmAltPage() {
         </div>
       </PageContainer>
       {toast}
+      {profileModal}
     </div>
   );
 }

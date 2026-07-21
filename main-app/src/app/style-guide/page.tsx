@@ -36,6 +36,7 @@ import {
   EmptyState,
   LabeledProgress,
   useToast,
+  useProfileModal,
   FeedbackStepper,
   ModeToggle,
   NavLogo,
@@ -89,6 +90,7 @@ export default function StyleGuide() {
   ]);
   const { toast, showToast } = useToast();
   const handleLogout = useSignOut();
+  const { profileModal, openProfile } = useProfileModal();
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -97,7 +99,7 @@ export default function StyleGuide() {
         logo={<NavLogo />}
         initials="SC"
         onQrClick={() => showToast("Badge QR opened")}
-        onProfile={() => showToast("Profile", "info")}
+        onProfile={openProfile}
         onLogout={handleLogout}
       />
       <PageContainer>
@@ -312,6 +314,7 @@ export default function StyleGuide() {
         onSubmit={() => showToast("Question submitted")}
       />
       {toast}
+      {profileModal}
     </div>
   );
 }

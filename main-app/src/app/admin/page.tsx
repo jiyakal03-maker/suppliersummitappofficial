@@ -17,6 +17,7 @@ import {
   LabeledProgress,
   EmptyState,
   useToast,
+  useProfileModal,
   AdminGate,
   useAdminUnlocked,
   AddressableList,
@@ -132,6 +133,7 @@ function addressedRate(items: AddressableItem[]) {
 export default function AdminPage() {
   const { toast, showToast } = useToast();
   const handleLogout = useSignOut();
+  const { profileModal, openProfile } = useProfileModal();
   const { unlocked, unlock } = useAdminUnlocked();
   const [section, setSection] = React.useState<SectionKey>("questions");
   const [questions, setQuestions] = React.useState(INITIAL_QUESTIONS);
@@ -161,7 +163,7 @@ export default function AdminPage() {
         logo={<NavLogo />}
         initials="SC"
         onQrClick={() => showToast("Badge QR opened")}
-        onProfile={() => showToast("Profile", "info")}
+        onProfile={openProfile}
         onLogout={handleLogout}
       />
 
@@ -284,6 +286,7 @@ export default function AdminPage() {
         </PageContainer>
       )}
       {toast}
+      {profileModal}
     </div>
   );
 }

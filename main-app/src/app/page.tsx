@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import ScheduleRoundedIcon from "@mui/icons-material/ScheduleRounded";
-import { PageContainer, SectionHeader, ListRow, TopNav, Banner, useToast, SummitSummary, NavLogo, OnboardingTour } from "@/components";
+import { PageContainer, SectionHeader, ListRow, TopNav, Banner, useToast, useProfileModal, SummitSummary, NavLogo, OnboardingTour } from "@/components";
 import { EtnBanner } from "@/components/homepage/etn-banner"
 import { MissionVision } from "@/components/homepage/mission-vision";
 import { OurValues } from "@/components/homepage/values"
@@ -26,6 +26,7 @@ import { useSignOut } from "@/lib/supabase/use-sign-out";
 export default function Home() {
   const { toast, showToast } = useToast();
   const handleLogout = useSignOut();
+  const { profileModal, openProfile } = useProfileModal();
 
   return (
     <div className="min-h-dvh bg-background">
@@ -34,7 +35,7 @@ export default function Home() {
         logo={<NavLogo />}
         initials="SC"
         onQrClick={() => showToast("Badge QR opened")}
-        onProfile={() => showToast("Profile", "info")}
+        onProfile={openProfile}
         onLogout={handleLogout}
       />
       <PageContainer>
@@ -71,6 +72,7 @@ export default function Home() {
         <EtnBanner />
       </PageContainer>
       {toast}
+      {profileModal}
       <OnboardingTour />
     </div>
   );

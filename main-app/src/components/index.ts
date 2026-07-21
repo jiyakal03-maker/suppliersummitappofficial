@@ -6,6 +6,7 @@ export { AiTag } from "./ai-tag";
 export { PollCard, type PollOption } from "./polls";
 export { QuestionCard } from "./questions";
 export { QrBadge, ContactShareList, type ShareField } from "./qr";
+export { ProfileModal, useProfileModal } from "./profile-modal";
 export { Banner, EmptyState, LabeledProgress, useToast } from "./feedback";
 export { FeedbackStepper } from "./feedback-stepper";
 export { ModeToggle } from "./mode-toggle";
