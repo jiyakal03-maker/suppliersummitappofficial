@@ -3,6 +3,7 @@ import * as React from "react";
 import Card from "@mui/material/Card";
 import Chip from "@mui/material/Chip";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
+import LockRoundedIcon from "@mui/icons-material/LockRounded";
 
 export interface PollOption {
   id: string;
@@ -13,11 +14,17 @@ export interface PollOption {
 /**
  * Live poll. Before voting: tappable options. After voting (or when
  * `showResults`): yellow result bars on a grey track with percentages.
+ *
+ * `locked` renders a scheduled-but-not-yet-open poll: options show as inert
+ * placeholders and `lockLabel` explains when it opens — used for polls tied
+ * to a specific agenda session rather than open the whole day.
  */
 export function PollCard({
   question,
   options,
   live,
+  locked,
+  lockLabel,
   votedId,
   showResults,
   onVote,
@@ -25,6 +32,8 @@ export function PollCard({
   question: string;
   options: PollOption[];
   live?: boolean;
+  locked?: boolean;
+  lockLabel?: string;
   votedId?: string | null;
   showResults?: boolean;
   onVote?: (optionId: string) => void;
@@ -39,40 +48,70 @@ export function PollCard({
     <Card className="p-4">
       <div className="flex items-start justify-between gap-3">
         <p className="text-[15px] font-semibold leading-snug text-ink">{question}</p>
-        {live && <Chip size="small" color="primary" label="Live" />}
+        {locked ? (
+          <Chip
+            size="small"
+            variant="outlined"
+            icon={<LockRoundedIcon sx={{ fontSize: 13 }} />}
+            label="Locked"
+            className="text-grey-600"
+          />
+        ) : (
+          live && <Chip size="small" color="primary" label="Live" />
+        )}
       </div>
-      <div className="mt-3 flex flex-col gap-2">
-        {options.map((o) => {
-          const pct = Math.round((o.votes / total) * 100);
-          const mine = votedId === o.id;
-          return revealed ? (
-            <div key={o.id} className="relative overflow-hidden rounded-(--radius-control) border border-grey-200">
-              <div
-                className="absolute inset-y-0 left-0 bg-yellow dark:bg-yellow/35"
-                style={{ width: `${pct}%` }}
-                aria-hidden
-              />
-              <div className="relative flex items-center justify-between px-3 py-2 text-[14px]">
-                <span className="inline-flex items-center gap-1.5 font-medium text-ink">
-                  {o.label}
-                  {mine && <CheckRoundedIcon sx={{ fontSize: 16 }} />}
-                </span>
-                <span className="font-semibold text-ink">{pct}%</span>
-              </div>
-            </div>
-          ) : (
-            <button
+
+      {locked ? (
+        <div className="mt-3 flex flex-col gap-2" aria-disabled>
+          {options.map((o) => (
+            <div
               key={o.id}
-              type="button"
-              onClick={() => onVote?.(o.id)}
-              className="rounded-(--radius-control) border border-grey-300 px-3 py-2 text-left text-[14px] font-medium text-ink transition-colors hover:border-ink hover:bg-grey-50 focus-visible:outline-2 focus-visible:outline-ink"
+              className="rounded-(--radius-control) border border-dashed border-grey-300 px-3 py-2 text-left text-[14px] font-medium text-grey-400"
             >
               {o.label}
-            </button>
-          );
-        })}
-      </div>
-      {revealed && (
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="mt-3 flex flex-col gap-2">
+          {options.map((o) => {
+            const pct = Math.round((o.votes / total) * 100);
+            const mine = votedId === o.id;
+            return revealed ? (
+              <div key={o.id} className="relative overflow-hidden rounded-(--radius-control) border border-grey-200">
+                <div
+                  className="absolute inset-y-0 left-0 bg-yellow dark:bg-yellow/35"
+                  style={{ width: `${pct}%` }}
+                  aria-hidden
+                />
+                <div className="relative flex items-center justify-between px-3 py-2 text-[14px]">
+                  <span className="inline-flex items-center gap-1.5 font-medium text-ink">
+                    {o.label}
+                    {mine && <CheckRoundedIcon sx={{ fontSize: 16 }} />}
+                  </span>
+                  <span className="font-semibold text-ink">{pct}%</span>
+                </div>
+              </div>
+            ) : (
+              <button
+                key={o.id}
+                type="button"
+                onClick={() => onVote?.(o.id)}
+                className="rounded-(--radius-control) border border-grey-300 px-3 py-2 text-left text-[14px] font-medium text-ink transition-colors hover:border-ink hover:bg-grey-50 focus-visible:outline-2 focus-visible:outline-ink"
+              >
+                {o.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {locked && lockLabel && (
+        <p className="mt-2.5 inline-flex items-center gap-1.5 text-xs font-medium text-grey-500">
+          <LockRoundedIcon sx={{ fontSize: 13 }} /> {lockLabel}
+        </p>
+      )}
+      {!locked && revealed && (
         <p className="mt-2 text-xs text-grey-600">
           {options.reduce((s, o) => s + o.votes, 0)} responses
         </p>
