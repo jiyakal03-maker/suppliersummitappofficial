@@ -15,6 +15,7 @@ import {
   useToast,
   type PollOption,
 } from "@/components";
+import { useSignOut } from "@/lib/supabase/use-sign-out";
 
 /**
  * Route: /polls ("Polls & feedback" in TopNav)
@@ -136,6 +137,7 @@ function withVote(options: PollOption[], votedId: string | null | undefined) {
 
 export default function PollsPage() {
   const { toast, showToast } = useToast();
+  const handleLogout = useSignOut();
   const [scheduledVotes, setScheduledVotes] = React.useState<Record<string, string>>({});
   const [anytimeVotes, setAnytimeVotes] = React.useState<Record<string, string>>({});
   const [rating, setRating] = React.useState<string | null>(null);
@@ -158,7 +160,7 @@ export default function PollsPage() {
         initials="SC"
         onQrClick={() => showToast("Badge QR opened")}
         onProfile={() => showToast("Profile", "info")}
-        onLogout={() => showToast("Signed out", "info")}
+        onLogout={handleLogout}
       />
       <PageContainer>
         <SectionHeader eyebrow="Today · July 15" title="Polls & feedback" />

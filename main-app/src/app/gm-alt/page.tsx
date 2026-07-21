@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import ConstructionRoundedIcon from "@mui/icons-material/ConstructionRounded";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import { PageContainer, SectionHeader, TopNav, NavLogo, useToast } from "@/components";
+import { useSignOut } from "@/lib/supabase/use-sign-out";
 
 /**
  * Route: /gm-alt
@@ -61,6 +62,7 @@ function RoleCard({
 
 export default function GmAltPage() {
   const { toast, showToast } = useToast();
+  const handleLogout = useSignOut();
   const router = useRouter();
 
   return (
@@ -71,7 +73,7 @@ export default function GmAltPage() {
         initials="SC"
         onQrClick={() => showToast("Badge QR opened")}
         onProfile={() => showToast("Profile", "info")}
-        onLogout={() => showToast("Signed out", "info")}
+        onLogout={handleLogout}
       />
       <PageContainer>
         <SectionHeader eyebrow="Collaborate live · Excalidraw backup" title="Growth Machine (alt)" />

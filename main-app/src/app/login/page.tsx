@@ -4,30 +4,33 @@ import { useRouter } from "next/navigation";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { NavLogo, ModeToggle, useToast } from "@/components";
+import { loginWithPin } from "./actions";
 
 /**
  * Route: /login
- * Demo-only: checks the ID/PIN against a hardcoded pair below rather than a
- * real lookup — there's no auth backend wired up yet (see supabase schema
- * migration + user_info.pin_hash for where real PIN verification would
- * eventually live). Swap DEMO_ID/DEMO_PIN and the check in handleSubmit for
- * a real Supabase call once that's ready.
+ * Looks the badge ID up in "user", checks the PIN via the verify_pin RPC
+ * (SECURITY DEFINER — RLS never lets a client read the pin hash directly),
+ * then mints a real Supabase Auth session so auth.uid() lines up with
+ * user.user_id for every RLS policy downstream.
  */
-const DEMO_ID = "SUMMIT2026";
-const DEMO_PIN = "1234";
 
 export default function LoginPage() {
   const router = useRouter();
   const { toast, showToast } = useToast();
   const [uniqueId, setUniqueId] = React.useState("");
   const [pin, setPin] = React.useState("");
+  const [submitting, setSubmitting] = React.useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (uniqueId.trim() === DEMO_ID && pin === DEMO_PIN) {
-      router.push("/welcome");
+    setSubmitting(true);
+    const { error } = await loginWithPin(uniqueId, pin);
+    setSubmitting(false);
+    if (error) {
+      showToast(error, "error");
     } else {
-      showToast("Invalid ID or PIN", "error");
+      router.push("/welcome");
+      router.refresh();
     }
   };
 
@@ -49,7 +52,7 @@ export default function LoginPage() {
           <div className="mt-8 flex flex-col gap-4">
             <TextField
               label="Unique ID"
-              placeholder="e.g. SUMMIT2026"
+              placeholder="e.g. SUMMIT-ATT-001"
               value={uniqueId}
               onChange={(e) => setUniqueId(e.target.value)}
               autoComplete="off"
@@ -65,16 +68,11 @@ export default function LoginPage() {
               autoComplete="off"
               required
             />
-            <Button type="submit" variant="contained" color="primary" fullWidth>
-              Log in
+            <Button type="submit" variant="contained" color="primary" fullWidth disabled={submitting}>
+              {submitting ? "Checking…" : "Log in"}
             </Button>
           </div>
         </form>
-
-        <div className="mt-6 rounded-(--radius-control) bg-yellow-tint px-3.5 py-2.5 text-center text-[13px] text-grey-700">
-          Demo credentials — ID <span className="font-semibold text-ink">{DEMO_ID}</span> · PIN{" "}
-          <span className="font-semibold text-ink">{DEMO_PIN}</span>
-        </div>
       </div>
       {toast}
     </div>

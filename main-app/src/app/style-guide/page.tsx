@@ -41,6 +41,7 @@ import {
   NavLogo,
 } from "@/components";
 import { tokens } from "@/theme/theme";
+import { useSignOut } from "@/lib/supabase/use-sign-out";
 
 /**
  * Light hex from `tokens` (theme.ts, mirrors globals.css :root); darkHex is
@@ -87,6 +88,7 @@ export default function StyleGuide() {
     { id: "role", label: "Role & company", value: "Account manager, Hendrick Screen", shared: true },
   ]);
   const { toast, showToast } = useToast();
+  const handleLogout = useSignOut();
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -96,7 +98,7 @@ export default function StyleGuide() {
         initials="SC"
         onQrClick={() => showToast("Badge QR opened")}
         onProfile={() => showToast("Profile", "info")}
-        onLogout={() => showToast("Signed out", "info")}
+        onLogout={handleLogout}
       />
       <PageContainer>
         <div id="top" className="mt-2 flex items-center justify-between scroll-mt-16">

@@ -9,6 +9,7 @@ import { JourneyRoadmap } from "@/components/homepage/journey-roadmap";
 import { RoadAheadDial } from "@/components/homepage/road-ahead-dial";
 import { BusinessUnits } from "@/components/homepage/business-units";
 import { GrowthMachine } from "@/components";
+import { useSignOut } from "@/lib/supabase/use-sign-out";
 
 /**
  * Route: / (landing page)
@@ -24,6 +25,7 @@ import { GrowthMachine } from "@/components";
  */
 export default function Home() {
   const { toast, showToast } = useToast();
+  const handleLogout = useSignOut();
 
   return (
     <div className="min-h-dvh bg-background">
@@ -33,7 +35,7 @@ export default function Home() {
         initials="SC"
         onQrClick={() => showToast("Badge QR opened")}
         onProfile={() => showToast("Profile", "info")}
-        onLogout={() => showToast("Signed out", "info")}
+        onLogout={handleLogout}
       />
       <PageContainer>
         <SummitSummary

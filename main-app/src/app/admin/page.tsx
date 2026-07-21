@@ -25,6 +25,7 @@ import {
   type AddressableItem,
   type VoteEntry,
 } from "@/components";
+import { useSignOut } from "@/lib/supabase/use-sign-out";
 
 /**
  * Route: /admin ("Administration" in TopNav, lock icon)
@@ -130,6 +131,7 @@ function addressedRate(items: AddressableItem[]) {
 
 export default function AdminPage() {
   const { toast, showToast } = useToast();
+  const handleLogout = useSignOut();
   const { unlocked, unlock } = useAdminUnlocked();
   const [section, setSection] = React.useState<SectionKey>("questions");
   const [questions, setQuestions] = React.useState(INITIAL_QUESTIONS);
@@ -160,7 +162,7 @@ export default function AdminPage() {
         initials="SC"
         onQrClick={() => showToast("Badge QR opened")}
         onProfile={() => showToast("Profile", "info")}
-        onLogout={() => showToast("Signed out", "info")}
+        onLogout={handleLogout}
       />
 
       {unlocked === false && <AdminGate onUnlock={unlock} />}
